@@ -1,3 +1,28 @@
+---
+title: "How My Team Uses Claude to Automate GRC Work — TPRM Sheets, Security Questionnaires, and Shared AI Workflows"
+date: 2026-06-28 09:00:00 +0530
+author: 0xAbhiram
+risk: MEDIUM
+thumbnail: /img/cyber-bg.jpg
+summary: How we use Claude Cowork to automate TPRM questionnaire responses — cutting completion time from 4 hours to 30 minutes with policy-grounded, consistent answers.
+vectors:
+  - GRC Automation
+  - AI-Assisted Workflows
+  - TPRM
+  - Security Questionnaires
+tags:
+  - GRC
+  - TPRM
+  - Claude
+  - AI
+  - Security Automation
+  - Cowork
+  - AppSec
+categories:
+  - Security Engineering
+description: How we use Claude Cowork to automate TPRM questionnaire responses — cutting completion time from 4 hours to 30 minutes with policy-grounded, consistent answers.
+---
+
 # How My Team Uses Claude to Automate GRC Work — TPRM Sheets, Security Questionnaires, and Shared AI Workflows
 
 GRC work is repetitive by design. Every enterprise customer asks roughly the same 150 questions in a slightly different spreadsheet. Every TPRM assessment wants the same information — your ISO/SOC2 status, your data retention policy, your incident response SLA, your encryption standards — just formatted differently, with different column names, sometimes in Excel, sometimes in a web portal, sometimes in a PDF form.
