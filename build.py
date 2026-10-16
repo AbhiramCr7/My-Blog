@@ -30,9 +30,9 @@ OUT = os.path.join(HERE, "public")
 POSTS = [
     dict(md="how-burp-proxy-encryption-works.md", page="post-burp.html", path="~/blog/burp-proxy",
          img="post-burp.jpg", log="01",
-         card_title="How Burp Decrypts HTTPS: CA, Fake Host Certs, Two Session Keys",
-         card_tags=["Burp Suite", "TLS", "HTTPS"],
-         alt="Diagram of a browser, Burp Proxy, and a server: decrypt in the middle, encrypt again toward the site"),
+         card_title="Behind the scenes: how Burp Suite actually reads HTTPS",
+         card_tags=["Burp Suite", "HTTPS", "Proxy"],
+         alt="Burp Suite behind the scenes: a proxy in the middle opening HTTPS between browser and server"),
 ]
 
 RENDER_JS = r"""
@@ -178,7 +178,7 @@ FOOTER='''<footer class="site-footer">
       <div class="footer-grid">
         <div class="footer-brand">
           <a class="footer-logo" href="/"><span>&gt;_</span> 0xAbhiram</a>
-          <p>Notes from a Product Security Engineer — red teaming, identity and GRC.</p>
+          <p><strong>Everyone can click Intercept. I write about what the tool does after that.</strong></p>
         </div>
         <nav class="footer-col" aria-label="Footer">
           <h2>Navigate</h2>
@@ -277,13 +277,13 @@ index_body=f'''  <header class="hero">
 {cards}
     </section>
   </main>'''
-home_desc = "0xAbhiram Blog — Product Security Engineer Abhiram SS. How Burp Proxy encrypts and decrypts HTTPS, with the full traffic path."
+home_desc = "0xAbhiram Blog — Product Security Engineer Abhiram SS. Behind the scenes of how Burp Suite actually reads HTTPS."
 home_ld = {
     "@context": "https://schema.org",
     "@graph": [
         {"@type": "WebSite", "name": SITE_NAME, "alternateName": ["0xAbhiram", "0xAbhiram Blogs"], "description": home_desc,
          **({"url": abs_url("")} if SITE_URL else {}), "author": AUTHOR},
-        {**AUTHOR, "jobTitle": "Product Security Engineer", "knowsAbout": ["Product Security", "Red Teaming", "VAPT", "Penetration Testing", "Cloud Security", "Active Directory", "Kerberos"]},
+        {**AUTHOR, "jobTitle": "Product Security Engineer", "knowsAbout": ["Product Security", "Burp Suite", "HTTPS", "Red Teaming", "VAPT", "Penetration Testing"]},
         {"@type": "Blog", "name": SITE_NAME, "author": AUTHOR,
          "blogPost": [{"@type": "BlogPosting", "headline": p["title"], "datePublished": p["date"],
                        **({"url": abs_url(p["page"])} if SITE_URL else {})} for p in POSTS]},
@@ -381,7 +381,7 @@ tags_body=f'''  <main id="main" class="page-offset">
       <p class="no-results" hidden>grep: no matches found. <button class="link-btn" id="reset-filter" type="button">reset filter</button></p>
     </div>
   </main>'''
-open("tags.html","w").write(page(f"Tags | {SITE_NAME}", "Browse 0xAbhiram's security writing by topic: red team, Active Directory, Kerberos, trust boundaries, GRC and more.",
+open("tags.html","w").write(page(f"Tags | {SITE_NAME}", "Browse 0xAbhiram's writing by topic — Burp Suite, HTTPS, and how security tools work behind the scenes.",
     "~/tags", "tags", tags_body, url="tags.html"))
 
 contact_body='''  <main id="main" class="page-offset">

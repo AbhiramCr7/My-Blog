@@ -3,16 +3,16 @@
 <channel>
   <title>0xAbhiram Blog</title>
   <link>https://0xabhiram-blogs.vercel.app</link>
-  <description>0xAbhiram Blog — Product Security Engineer Abhiram SS. How Burp Proxy encrypts and decrypts HTTPS, with the full traffic path.</description>
+  <description>0xAbhiram Blog — Product Security Engineer Abhiram SS. Behind the scenes of how Burp Suite actually reads HTTPS.</description>
   <language>en-us</language>
   <lastBuildDate>Fri, 16 Oct 2026 10:00:00 +0530</lastBuildDate>
   <managingEditor>abhiram6542@gmail.com (Abhiram SS)</managingEditor>
   <item>
-    <title>How Burp Decrypts HTTPS: CA, Fake Host Certs, and Two Session Keys</title>
+    <title>Behind the scenes: how Burp Suite actually reads HTTPS</title>
     <link>https://0xabhiram-blogs.vercel.app/post-burp.html</link>
     <guid isPermaLink="true">https://0xabhiram-blogs.vercel.app/post-burp.html</guid>
     <pubDate>Fri, 16 Oct 2026 10:00:00 +0530</pubDate>
-    <description>How Burp Proxy works on the wire: a self-signed CA, per-host certs signed with that CA key, two TLS sessions, and decrypt/encrypt with two different session keys. No install walkthrough.</description>
+    <description>Everyone knows how to hit Intercept. This is the backend: two HTTPS conversations, a stamp Burp made on your machine, and the plaintext sitting between them.</description>
   </item>
 </channel>
 </rss>
