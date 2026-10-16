@@ -865,20 +865,6 @@ main,
 .prose .note-box strong,
 .prose .call-box strong { color: #ffd9dd; }
 
-.prose details.iq {
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 0.7rem 1rem;
-  background: rgb(20 8 12 / 0.5);
-}
-.prose details.iq + details.iq { margin-top: 0.55rem; }
-.prose details.iq summary {
-  cursor: pointer;
-  font-weight: 600;
-  color: #ffd9dd;
-}
-.prose details.iq p { margin-top: 0.65rem; color: var(--muted); font-size: 0.95rem; }
-
 .prose h2 { font-size: 1.4rem; }
 
 .prose ul,
