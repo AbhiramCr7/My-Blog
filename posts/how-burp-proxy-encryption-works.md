@@ -1,5 +1,5 @@
 ---
-title: "How Burp Suite Intercepts HTTPS: TLS, CA Certificates, On-the-Fly Certificates and Two TLS Sessions"
+title: "Burp Under the Hood"
 date: 2026-10-16 23:50:00 +0530
 author: 0xAbhiram
 tags:

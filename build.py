@@ -30,7 +30,7 @@ OUT = os.path.join(HERE, "public")
 POSTS = [
     dict(md="how-burp-proxy-encryption-works.md", page="post-burp.html", path="~/blog/burp-proxy",
          img="post-burp.jpg", log="01",
-         card_title="How Burp Suite Intercepts HTTPS: Two TLS Sessions, CA and On-the-Fly Certificates",
+         card_title="Burp Under the Hood",
          card_tags=["Burp Suite", "HTTPS", "TLS"],
          alt="Browser, Burp proxy, and target server with two TLS tunnels"),
 ]
