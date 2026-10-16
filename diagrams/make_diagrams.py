@@ -111,10 +111,10 @@ pages["09-keys.html"] = page("The keys, not the UI", """
 <div class="row">
   <div class="box"><b>CA key pair</b><small>long-term<br>signs host certs</small></div>
   <div class="box red"><b>Host key pair</b><small>per site, on the fly<br>proves “I am shop.test”<br>to the browser</small></div>
-  <div class="box"><b>Session key A</b><small>this TLS only<br>encrypts Browser ↔ Burp</small></div>
-  <div class="box ok"><b>Session key B</b><small>this TLS only<br>encrypts Burp ↔ server</small></div>
+  <div class="box"><b>TLS Connection A</b><small>this TLS only<br>encrypts Browser ↔ Burp</small></div>
+  <div class="box ok"><b>TLS Connection B</b><small>this TLS only<br>encrypts Burp ↔ server</small></div>
 </div>
-<p class="note">Certificates carry public keys. Encryption of the actual HTTP uses the short-lived session keys from each handshake. Different lock, different key. Burp is the only place that has both session keys.</p>
+<p class="note">Certificates carry public keys. The TLS handshakes establish shared cryptographic secrets from which traffic-protection keys are derived. The two connections have independent cryptographic state.</p>
 """, 360)
 
 pages["10-sign.html"] = page("How Burp signs a new host cert", """
@@ -123,17 +123,17 @@ pages["10-sign.html"] = page("How Burp signs a new host cert", """
   <div class="step"><div class="n">2</div><div>Fill the cert: Common Name / SAN = shop.test, plus dates, serial, public key.</div></div>
   <div class="step"><div class="n">3</div><div>Hash that cert body. Sign the hash with the <b>Burp CA private key</b>. Stick the signature on the cert.</div></div>
   <div class="step"><div class="n">4</div><div>Hand the cert to the browser during TLS. Browser hashes the body, checks the signature with the <b>CA public key</b> it already trusts.</div></div>
-  <div class="step"><div class="n">5</div><div>Match. Browser believes this cert is shop.test. Handshake continues. Session key A is born.</div></div>
+  <div class="step"><div class="n">5</div><div>Match. Browser believes this cert is shop.test. Handshake continues. TLS Connection A is established.</div></div>
 </div>
 <p class="note">Self-signed would mean the host cert signed itself. Burp does not do that by default. The host cert is signed by Burp’s CA. That is why one trusted CA covers every site you visit.</p>
 """, 500)
 
 pages["11-crypto.html"] = page("One request — decrypt, then encrypt again", """
 <div class="steps">
-  <div class="step"><div class="n">A</div><div>Browser encrypts <code>GET /login</code> with <b>session key A</b>. Wire Browser→Burp is ciphertext.</div></div>
-  <div class="step"><div class="n">A→</div><div>Burp decrypts with session key A. Inside Burp the bytes are normal HTTP. This is what you see.</div></div>
-  <div class="step"><div class="n">B</div><div>Burp encrypts that same HTTP with <b>session key B</b>. Wire Burp→server is ciphertext again.</div></div>
-  <div class="step"><div class="n">B→</div><div>Server decrypts with session key B. It never had key A. Reply does the same in reverse.</div></div>
+  <div class="step"><div class="n">A</div><div>Browser encrypts <code>GET /login</code> with <b>TLS Connection A keys</b>. Wire Browser→Burp is ciphertext.</div></div>
+  <div class="step"><div class="n">A→</div><div>Burp terminates TLS Connection A. Inside Burp the bytes are normal HTTP. This is what you see.</div></div>
+  <div class="step"><div class="n">B</div><div>Burp encrypts that same HTTP with <b>TLS Connection B keys</b>. Wire Burp→server is ciphertext again.</div></div>
+  <div class="step"><div class="n">B→</div><div>The target decrypts TLS Connection B. It never had Connection A state. Reply does the same in reverse.</div></div>
 </div>
 <p class="note">AES (or whatever the handshake picked) is not “broken”. Burp is a valid endpoint of both handshakes, so it is allowed to decrypt. Two rooms, two keys, Burp has a door into both.</p>
 """, 430)
@@ -142,8 +142,8 @@ pages["06-full-flow.html"] = page("Backend path of one HTTPS request", """
 <div class="steps">
   <div class="step"><div class="n">1</div><div><code>CONNECT shop.test:443</code> — not TLS yet. Burp learns the hostname.</div></div>
   <div class="step"><div class="n">2</div><div>Browser ClientHello (SNI=shop.test). Burp mints host cert + host key, signs with CA key.</div></div>
-  <div class="step"><div class="n">3</div><div>TLS handshake Browser↔Burp finishes. <b>Session key A</b> exists only on those two sides.</div></div>
-  <div class="step"><div class="n">4</div><div>Burp ClientHello to the real server. Real cert. Handshake finishes. <b>Session key B</b>.</div></div>
+  <div class="step"><div class="n">3</div><div>TLS handshake Browser↔Burp finishes. <b>TLS Connection A</b> exists only on those two sides.</div></div>
+  <div class="step"><div class="n">4</div><div>Burp ClientHello to the real server. Real cert. Handshake finishes. <b>TLS Connection B</b>.</div></div>
   <div class="step"><div class="n">5</div><div>HTTP arrives encrypted with A. Burp decrypts with A. Plaintext sitting in memory.</div></div>
   <div class="step"><div class="n">6</div><div>Optional: mutate the plaintext (intercept). Then encrypt with B and send.</div></div>
   <div class="step"><div class="n">7</div><div>Response: decrypt with B, encrypt with A. Two rooms, two keys, same HTTP in the lobby.</div></div>

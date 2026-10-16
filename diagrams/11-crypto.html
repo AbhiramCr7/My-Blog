@@ -23,10 +23,10 @@ hr.soft{border:0;border-top:1px dashed var(--line);margin:14px 0}
 body,.wrap{height:430px}</style></head>
 <body><div class="wrap"><h1>One request — decrypt, then encrypt again</h1>
 <div class="steps">
-  <div class="step"><div class="n">A</div><div>Browser encrypts <code>GET /login</code> with <b>session key A</b>. Wire Browser→Burp is ciphertext.</div></div>
-  <div class="step"><div class="n">A→</div><div>Burp decrypts with session key A. Inside Burp the bytes are normal HTTP. This is what you see.</div></div>
-  <div class="step"><div class="n">B</div><div>Burp encrypts that same HTTP with <b>session key B</b>. Wire Burp→server is ciphertext again.</div></div>
-  <div class="step"><div class="n">B→</div><div>Server decrypts with session key B. It never had key A. Reply does the same in reverse.</div></div>
+  <div class="step"><div class="n">A</div><div>Browser encrypts <code>GET /login</code> with <b>TLS Connection A keys</b>. Wire Browser→Burp is ciphertext.</div></div>
+  <div class="step"><div class="n">A→</div><div>Burp terminates TLS Connection A. Inside Burp the bytes are normal HTTP. This is what you see.</div></div>
+  <div class="step"><div class="n">B</div><div>Burp encrypts that same HTTP with <b>TLS Connection B keys</b>. Wire Burp→server is ciphertext again.</div></div>
+  <div class="step"><div class="n">B→</div><div>The target decrypts TLS Connection B. It never had Connection A state. Reply does the same in reverse.</div></div>
 </div>
 <p class="note">AES (or whatever the handshake picked) is not “broken”. Burp is a valid endpoint of both handshakes, so it is allowed to decrypt. Two rooms, two keys, Burp has a door into both.</p>
 </div></body></html>

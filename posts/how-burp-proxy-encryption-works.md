@@ -76,17 +76,17 @@ Browser  ──── TLS connection A ────  Burp  ──── TLS conn
 
 The origin never sees the per-host certificate. The browser never holds the origin private key. **Burp does not obtain the target server’s private key** and does **not** decrypt the original browser-to-server TLS connection using that key. Burp terminates the client-side TLS connection and establishes a separate TLS connection to the destination.
 
-Connection A and Connection B have independent TLS state and independently derived traffic-protection keys. The TLS handshake **establishes shared cryptographic secrets from which traffic-protection keys are derived**. Diagrams label the hops **A** and **B**. Those labels are not a single AES key shipped across the wire.
+**TLS Connection A: Browser ↔ Burp.** **TLS Connection B: Burp ↔ Target Server.** The TLS handshakes establish shared cryptographic secrets from which traffic-protection keys are derived. The two connections have independent cryptographic state. Diagrams label the hops **A** and **B**. Those labels are not a single AES key shipped across the wire.
 
 ![Master architecture](assets/burp/d-master.svg)
 
 ## 2. Before TLS: listener, CONNECT, SNI
 
-This section describes the **explicit HTTP proxy** flow used when a browser is configured to use Burp as its proxy (default listener `127.0.0.1:8080`). That is not TLS itself, and not every HTTPS architecture uses it.
+This section assumes a browser configured to use Burp as an explicit HTTP proxy (default listener `127.0.0.1:8080`). That is not TLS itself, and not every HTTPS architecture uses it.
 
 **CONNECT is an HTTP proxy method.** It is sent to the proxy to establish a tunnel through an explicit HTTP proxy. It is **not** part of TLS and it is **not** sent to `shop.test`. HTTPS does not always begin with CONNECT.
 
-With an explicit HTTP proxy, the browser first sends an HTTP CONNECT request to the proxy:
+With an explicit HTTP proxy, the browser first sends an HTTP CONNECT request to the proxy. After Burp responds with 200 Connection Established, the browser begins the TLS handshake through that connection.
 
 ```
 Browser
@@ -107,7 +107,7 @@ CONNECT shop.test:443 HTTP/1.1
 Host: shop.test:443
 ```
 
-Meaning: “proxy, open a TCP tunnel toward that host:port.” Burp responds with `200 Connection Established`. The browser can then begin the TLS handshake through the established proxy connection:
+Meaning: “proxy, open a TCP tunnel toward that host:port.” After Burp responds with `200 Connection Established`, the browser begins the TLS handshake through that connection:
 
 ```
 HTTP/1.1 200 Connection Established
@@ -117,7 +117,7 @@ From the browser’s TLS perspective, Burp is the **TLS endpoint** for this conn
 
 Browser requests `https://shop.test`. Burp generates/presents a certificate for `shop.test`, signed by the **Burp CA**. The browser accepts it because **Burp CA is trusted in the browser’s trust store**, and the rest of validation (hostname, dates, signatures, chain) passes. It does not accept the certificate merely because Burp answered the TCP connection.
 
-The TLS ClientHello **can** contain the Server Name Indication (SNI) extension. When present, it normally carries the hostname the client intends to reach, such as `shop.test`.
+The TLS ClientHello can contain the Server Name Indication (SNI) extension. When present, it normally carries the hostname the client intends to reach.
 
 SNI is a TLS extension. It is **not** a certificate, **not** a private key, **not** the certificate itself, and **not** guaranteed to be present in every TLS connection.
 
@@ -127,7 +127,7 @@ When SNI is present, the hostname can help an interception proxy identify the in
 
 ![CONNECT, then ClientHello, then per-host certificate](assets/burp/d-connect.svg)
 
-Plain HTTP on an explicit proxy never sends CONNECT. The browser sends `GET http://shop.test/…` (absolute-form) to `:8080` and Burp forwards it. The HTTPS intercept path below still assumes an explicit HTTP proxy unless a later section says otherwise.
+Plain HTTP on an explicit proxy never sends CONNECT. The browser sends `GET http://shop.test/…` (absolute-form) to `:8080` and Burp forwards it. This section assumes a browser configured to use Burp as an explicit HTTP proxy unless a later section says otherwise.
 
 ## 3. Burp CA
 
@@ -223,7 +223,7 @@ Generated for an intercepted hostname (example: `shop.test`). Burp controls the 
 Browser ↔ Burp. The browser establishes TLS with Burp and derives traffic-protection keys for the browser-to-Burp connection. Independent TLS cryptographic state.
 
 **TLS CONNECTION B**  
-Burp ↔ target. Burp establishes a separate TLS connection to the target server, producing independent cryptographic state and traffic-protection keys for that connection.
+Burp ↔ Target Server. Burp establishes a separate TLS connection to the real server and performs its own TLS key establishment.
 
 **TARGET SERVER PRIVATE KEY**  
 Stays on `shop.test`. Burp does not possess the target server's private key. Burp participates in both TLS connections, each with its own cryptographic state.
@@ -234,7 +234,7 @@ Stays on `shop.test`. Burp does not possess the target server's private key. Bur
 
 **TLS 1.3** uses ephemeral key agreement and derives handshake/application traffic secrets.
 
-Modern TLS should therefore **not** be described as simply “the server sends a session key.” The handshake establishes shared secrets from which traffic-protection keys are derived.
+Modern TLS should therefore **not** be described as simply shipping one encryption key from the server. The TLS handshakes establish shared cryptographic secrets from which traffic-protection keys are derived. The two connections have independent cryptographic state.
 
 Burp, as a TLS endpoint on A and as a TLS client on B, participates in whatever handshake the peer negotiates (within the protocols the listener / Java TLS settings allow). That is still termination of one connection and establishment of another.
 
@@ -449,7 +449,7 @@ Burp is a TLS endpoint on A, so it can inspect/modify HTTP, then wrap a **new** 
 Browser -- encrypted TLS --> Burp/network layer -- same encrypted TLS stream --> origin
 ```
 
-In TLS passthrough, Burp does **not** terminate the client's TLS connection. Therefore it cannot inspect or modify the HTTP plaintext inside that connection. Burp does not establish a separate intercepted client-side TLS endpoint for that traffic. No Burp-generated interception certificate for that hop, no HTTP history of bodies, no Intercept.
+Burp does not terminate the client's TLS connection for that host, so the HTTP plaintext is not available to Burp. No Burp-generated interception certificate for that hop, no HTTP history of bodies, no Intercept.
 
 ![Passthrough](assets/burp/d-passthrough.svg)
 
@@ -522,7 +522,7 @@ Burp can present client certs **upstream** (`Settings → Network → TLS → Cl
 | “SNI is how the proxy is selected.” | Explicit proxy is selected by browser proxy config. SNI, **when present**, names the **TLS** host. |
 | “SNI is always in ClientHello.” | SNI is an **optional** TLS extension. |
 | “CONNECT is part of TLS.” | CONNECT is an **HTTP proxy** method. TLS starts after `200`. |
-| “Burp gets the server’s session key.” | The two TLS connections have **separate** cryptographic state and traffic-protection keys. |
+| “Burp reuses the origin TLS traffic secrets.” | The two TLS connections have **separate** cryptographic state and traffic-protection keys. |
 | “The browser trusts Burp because the cert looks legitimate.” | The **Burp CA is in the trust store**. |
 | “Pinning means the browser doesn’t trust the CA.” | Pinning is usually an **app-level** extra identity check. |
 | “HTTP/2 is only a UI setting.” | ALPN on **each hop** independently. |
@@ -589,6 +589,10 @@ Intercept is simply Burp pausing the HTTP message after it has terminated the cl
 
 ## How I would explain this in sixty seconds
 
-HTTPS is HTTP carried over TLS. With an explicit HTTP proxy, the browser sends CONNECT to Burp, then begins TLS. Burp terminates that client-side TLS connection (Connection A) with a Burp-generated interception certificate signed by the trusted Burp CA, reads the HTTP plaintext, and establishes a separate TLS connection to the destination (Connection B). Intercept only pauses that already-terminated HTTP message. Burp does not possess the target private key and does not decrypt an original end-to-end TLS connection.
+With an explicit HTTP proxy, CONNECT establishes the proxy tunnel before the TLS handshake. When SNI is present, it can provide the hostname the client intends to reach.
+
+Burp terminates one TLS connection with the browser and establishes a separate TLS connection with the target server. These connections have independent cryptographic state.
+
+Intercept only pauses that already-terminated HTTP message. Burp does not possess the target private key and does not decrypt an original end-to-end TLS connection.
 
 Primary references (paraphrased, not copied): [Burp Proxy](https://portswigger.net/burp/documentation/desktop/tools/proxy), [proxy settings](https://portswigger.net/burp/documentation/desktop/settings/tools/proxy) (CA-signed per-host certs, passthrough, listener HTTP/2), [managing CA certificates](https://portswigger.net/burp/documentation/desktop/tools/proxy/manage-certificates), [invisible proxying](https://portswigger.net/burp/documentation/desktop/tools/proxy/invisible), [HTTP/2](https://portswigger.net/burp/documentation/desktop/http2), [TLS / client certificates](https://portswigger.net/burp/documentation/desktop/settings/network/tls).

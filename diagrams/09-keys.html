@@ -25,8 +25,8 @@ body,.wrap{height:360px}</style></head>
 <div class="row">
   <div class="box"><b>CA key pair</b><small>long-term<br>signs host certs</small></div>
   <div class="box red"><b>Host key pair</b><small>per site, on the fly<br>proves “I am shop.test”<br>to the browser</small></div>
-  <div class="box"><b>Session key A</b><small>this TLS only<br>encrypts Browser ↔ Burp</small></div>
-  <div class="box ok"><b>Session key B</b><small>this TLS only<br>encrypts Burp ↔ server</small></div>
+  <div class="box"><b>TLS Connection A</b><small>this TLS only<br>encrypts Browser ↔ Burp</small></div>
+  <div class="box ok"><b>TLS Connection B</b><small>this TLS only<br>encrypts Burp ↔ server</small></div>
 </div>
-<p class="note">Certificates carry public keys. Encryption of the actual HTTP uses the short-lived session keys from each handshake. Different lock, different key. Burp is the only place that has both session keys.</p>
+<p class="note">Certificates carry public keys. The TLS handshakes establish shared cryptographic secrets from which traffic-protection keys are derived. The two connections have independent cryptographic state.</p>
 </div></body></html>
