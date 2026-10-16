@@ -32,7 +32,7 @@ POSTS = [
          img="post-burp.jpg", log="01",
          card_title="How Burp Suite Intercepts HTTPS: Two TLS Sessions, CA and On-the-Fly Certificates",
          card_tags=["Burp Suite", "HTTPS", "TLS"],
-         alt="Architecture diagram of Burp Suite terminating browser TLS and opening a separate TLS session to the origin"),
+         alt="Burp Suite lightning mark on a dark red field"),
 ]
 
 RENDER_JS = r"""
@@ -235,7 +235,7 @@ def card(p, featured):
     tags = "\n".join(f'                <li><a href="tags.html#{slug(t)}">{t}</a></li>' for t in p["card_tags"])
     return f'''        <li class="post-card{' post-card--featured' if featured else ''}">
           <figure class="post-cover">
-            <img src="assets/{p['img']}?v=2" alt="{esc(p['alt'])}" width="1000" height="562" loading="lazy">
+            <img src="assets/{p['img']}?v=3" alt="{esc(p['alt'])}" width="1000" height="562" loading="lazy">
             <span class="post-index">LOG {p['log']}</span>
           </figure>
           <div class="post-body">
@@ -277,7 +277,7 @@ index_body=f'''  <header class="hero">
 {cards}
     </section>
   </main>'''
-home_desc = "0xAbhiram Blog - Product Security Engineer Abhiram SS. How Burp Suite intercepts HTTPS: CONNECT, Burp CA, on-the-fly certificates, and two TLS sessions."
+home_desc = "0xAbhiram Blog — Product Security Engineer Abhiram SS. How Burp Suite intercepts HTTPS: CONNECT, Burp CA, on-the-fly certificates, and two TLS sessions."
 home_ld = {
     "@context": "https://schema.org",
     "@graph": [
@@ -289,7 +289,7 @@ home_ld = {
                        **({"url": abs_url(p["page"])} if SITE_URL else {})} for p in POSTS]},
     ],
 }
-open("index.html","w").write(page("0xAbhiram Blog - Product Security Engineer Abhiram SS", home_desc,
+open("index.html","w").write(page("0xAbhiram Blog — Product Security Engineer Abhiram SS", home_desc,
     "~/blog", "blog", index_body, True, True, url="", jsonld=home_ld))
 
 for p in POSTS:
@@ -297,7 +297,7 @@ for p in POSTS:
     body = f'''  <main id="main" class="container container--panel page-offset">
     <article class="prose panel glass">
       <figure class="post-hero-image">
-        <img src="assets/{p['img']}?v=2" alt="{esc(p['alt'])}" width="1000" height="562">
+        <img src="assets/{p['img']}?v=3" alt="{esc(p['alt'])}" width="1000" height="562">
       </figure>
       <header class="post-header">
         <p class="post-meta">
@@ -345,7 +345,7 @@ for p in posts:
     tl="".join(f'<li data-tag="{slug(t)}">{t}</li>' for t in p["tags"])
     rows.append(f'''        <li class="tag-row" data-tags="{' '.join(slug(t) for t in p['tags'])}">
           <a href="{p['url']}">
-            <img src="assets/{p['img']}?v=2" alt="" width="1000" height="562" loading="lazy">
+            <img src="assets/{p['img']}?v=3" alt="" width="1000" height="562" loading="lazy">
             <div>
               <p class="post-log"><time datetime="{p['date']}">{p['date']}</time></p>
               <h2>{p['title']}</h2>
@@ -381,7 +381,7 @@ tags_body=f'''  <main id="main" class="page-offset">
       <p class="no-results" hidden>grep: no matches found. <button class="link-btn" id="reset-filter" type="button">reset filter</button></p>
     </div>
   </main>'''
-open("tags.html","w").write(page(f"Tags | {SITE_NAME}", "Browse 0xAbhiram's writing by topic - Burp Suite, HTTPS, and how security tools work behind the scenes.",
+open("tags.html","w").write(page(f"Tags | {SITE_NAME}", "Browse 0xAbhiram's writing by topic — Burp Suite, HTTPS, and how security tools work behind the scenes.",
     "~/tags", "tags", tags_body, url="tags.html"))
 
 contact_body='''  <main id="main" class="page-offset">
@@ -389,7 +389,7 @@ contact_body='''  <main id="main" class="page-offset">
       <header class="page-head">
         <p class="page-cmd">./contact --open</p>
         <h1 class="page-title">Open a channel</h1>
-        <p class="page-sub">Research collab, a bug you found, or a question about a post - the line is open.</p>
+        <p class="page-sub">Research collab, a bug you found, or a question about a post — the line is open.</p>
       </header>
 
       <div class="contact-grid">
@@ -400,7 +400,7 @@ contact_body='''  <main id="main" class="page-offset">
           </div>
           <div class="term-body">
             <p class="cmd"><span class="ps">$</span><span class="c">whoami</span></p>
-            <p class="out">Abhiram SS - Product Security Engineer</p>
+            <p class="out">Abhiram SS — Product Security Engineer</p>
             <p class="cmd"><span class="ps">$</span><span class="c">cat channels.txt</span></p>
             <ul class="channels">
               <li>
@@ -433,13 +433,13 @@ contact_body='''  <main id="main" class="page-offset">
           <label class="field"><span>Subject</span><input name="subject" maxlength="120" placeholder="What's this about?"></label>
           <label class="field"><span>Payload</span><textarea name="message" required minlength="10" maxlength="4000" placeholder="Your message…"></textarea></label>
           <button class="send" type="submit">Send transmission <span aria-hidden="true">→</span></button>
-          <p class="fine" role="status" aria-live="polite">// no trackers - straight to my inbox.</p>
+          <p class="fine" role="status" aria-live="polite">// no trackers — straight to my inbox.</p>
         </form>
       </div>
     </div>
   </main>'''
 contact_body = contact_body.replace('data-to="CONTACT_EMAIL"', f'data-to="{CONTACT_EMAIL}"').replace('data-key="FORM_KEY"', f'data-key="{FORM_KEY}"')
-open("contact.html","w").write(page(f"Contact | {SITE_NAME}", "Get in touch with Abhiram SS (0xAbhiram), Product Security Engineer - research collaboration, responsible disclosure, or a question about a post.",
+open("contact.html","w").write(page(f"Contact | {SITE_NAME}", "Get in touch with Abhiram SS (0xAbhiram), Product Security Engineer — research collaboration, responsible disclosure, or a question about a post.",
     "~/contact", "contact", contact_body, url="contact.html"))
 
 robots = "User-agent: *\nAllow: /\n"
@@ -505,7 +505,7 @@ headers = [
 ]
 vercel = {
     "framework": None,
-    "installCommand": "echo \"static site - nothing to install\"",
+    "installCommand": "echo \"static site — nothing to install\"",
     "buildCommand": "echo \"public/ is prebuilt with npm run build\"",
     "outputDirectory": "public",
     "cleanUrls": False,
