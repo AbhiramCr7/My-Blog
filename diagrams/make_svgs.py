@@ -78,12 +78,12 @@ box(400, 80, 200, 70, "2. CONNECT", "shop.test:443")+
 box(740, 80, 200, 70, "3. 200 Established")+
 arrow(260, 115, 400, 115)+
 arrow(600, 115, 740, 115)+
-box(60, 220, 200, 70, "4. ClientHello", "SNI = shop.test")+
+box(60, 220, 200, 70, "4. ClientHello", "SNI if present")+
 box(400, 220, 200, 70, "5. Host cert", "signed by Burp CA", "burp")+
-box(740, 220, 200, 70, "6. TLS A up", "session keys A")+
+box(740, 220, 200, 70, "6. TLS A up", "derived keys for A")+
 arrow(260, 255, 400, 255)+
 arrow(600, 255, 740, 255)+
-label(500, 340, "CONNECT names the hop. SNI names the cert. Cert is not sent before the destination is known.", DIM, 13),
+label(500, 340, "CONNECT is HTTP-proxy, sent to Burp, not TLS and not sent to shop.test.", DIM, 13),
 "CONNECT then TLS ClientHello with SNI then Burp host certificate")
 
 files["d-ca-tree.svg"] = svg(1000, 340, defs()+title("One installation CA, many per-host certificates")+
@@ -116,7 +116,7 @@ label(500, 48, "", DIM, 1),
 files["d-keys.svg"] = svg(1000, 300, defs()+title("Which keys are involved")+
 box(40, 70, 220, 160, "CA private key", "signs host certs", "burp")+
 box(280, 70, 220, 160, "Host key pair", "TLS server to browser")+
-box(520, 70, 220, 160, "Session keys A / B", "encrypt HTTP records")+
+box(520, 70, 220, 160, "Traffic keys A / B", "derived per hop")+
 box(760, 70, 200, 160, "shop.test key", "never in Burp")+
 label(500, 270, "Burp does not possess the origin server’s private key.", DIM, 14),
 "CA key, per-host key, TLS session keys, origin private key stays on server")
@@ -129,7 +129,7 @@ files["d-request.svg"] = svg(1000, 520, defs()+title("Request lifecycle")+
         "Browser opens TCP to 127.0.0.1:8080",
         "CONNECT shop.test:443 HTTP/1.1",
         "Burp: 200 Connection Established",
-        "ClientHello (SNI=shop.test, ALPN…)",
+        "ClientHello (SNI if present, ALPN…)",
         "Burp presents per-host cert signed by Burp CA",
         "Browser validates chain → TLS session A",
         "Encrypted HTTP on session A",
@@ -158,15 +158,15 @@ box(410, 80, 180, 80, "Burp", "forwards TLS records", "burp")+
 box(740, 80, 180, 80, "shop.test")+
 arrow(260, 120, 410, 120)+
 arrow(590, 120, 740, 120)+
-label(500, 200, "No HTTP visibility. No Intercept. No history of bodies. Ciphertext in, ciphertext out.", DIM, 13)+
+label(500, 200, "No termination. No Burp-generated leaf. No HTTP plaintext. Ciphertext in, ciphertext out.", DIM, 13)+
 label(335, 70, "encrypted", DIM, 11)+
 label(665, 70, "encrypted", DIM, 11),
 "TLS passthrough forwards encrypted records without decrypting")
 
 files["d-pinning.svg"] = svg(1000, 300, defs()+title("Certificate pinning vs CA trust")+
 box(60, 70, 400, 180, "Normal trust", "signed by a trusted CA → accept")+
-box(540, 70, 400, 180, "Pinning", "also: does SPKI / cert match the pin?")+
-label(500, 280, "Burp CA trusted + pin mismatch = handshake failure. Installing the CA is not enough.", DIM, 13),
+box(540, 70, 400, 180, "App pinning", "expected cert / public key / SPKI")+
+label(500, 280, "Application-level check. Trusted Burp CA is not enough if the pin misses.", DIM, 13),
 "Pinning rejects Burp host certificates even if the CA is trusted")
 
 files["d-h2.svg"] = svg(1000, 280, defs()+title("HTTP/1.1 vs HTTP/2 on the wire")+
@@ -181,7 +181,7 @@ box(400, 70, 200, 90, "Burp listener", "invisible mode", "burp")+
 box(760, 70, 200, 90, "Origin")+
 arrow(240, 115, 400, 115)+
 arrow(600, 115, 760, 115)+
-label(500, 200, "DNS/hosts points the name at Burp. TLS starts immediately. Hostname from SNI or Host.", DIM, 13)+
+label(500, 200, "Redirected TCP. No CONNECT. Dest from address, SNI if present, then Host.", DIM, 13)+
 label(500, 228, "No CONNECT. Destination for outbound must not loop back to the same listener.", DIM, 13),
 "Non-proxy-aware client connects directly to an invisible Burp listener")
 
@@ -195,25 +195,54 @@ label(500, 210, "Server proves itself with its cert. Client must also prove itse
 label(500, 238, "Burp presents a configured PKCS#12 / PKCS#11 cert when the origin asks.", DIM, 13),
 "Mutual TLS with Burp presenting a client certificate upstream")
 
-files["d-master.svg"] = svg(1000, 560, defs()+title("Master architecture")+
+files["d-master.svg"] = svg(1000, 620, defs()+title("HTTPS interception")+
 box(40, 70, 160, 70, "Browser")+
-label(120, 160, "CONNECT shop.test:443", DIM, 11)+
-arrow(120, 140, 120, 190)+
-f'<rect x="300" y="60" width="400" height="430" rx="16" fill="{BOX}" stroke="{RED}" stroke-width="2"/>'+
-label(500, 90, "BURP SUITE", INK, 16, "middle", "700")+
-label(500, 114, "Proxy listener  ·  127.0.0.1:8080", DIM, 12)+
-box(360, 140, 280, 50, "Burp CA  →  per-host cert", "", "burp")+
-box(360, 210, 280, 50, "TLS session A  (browser)")+
-box(360, 280, 280, 50, "HTTP plaintext  inspect/modify", "", "burp")+
-box(360, 350, 280, 50, "TLS session B  (upstream)")+
-label(500, 430, "Does not hold shop.test private key", DIM, 12)+
-label(500, 454, "Browser validates host cert  ·  Burp validates origin cert", DIM, 12)+
-arrow(120, 250, 300, 250)+
-arrow(700, 375, 820, 375)+
-box(800, 340, 160, 70, "shop.test")+
+label(120, 158, "1. CONNECT shop.test:443", DIM, 11)+
+arrow(120, 140, 120, 200)+
+f'<rect x="280" y="55" width="440" height="500" rx="16" fill="{BOX}" stroke="{RED}" stroke-width="2"/>'+
+label(500, 84, "BURP PROXY", INK, 16, "middle", "700")+
+label(500, 108, "explicit HTTP proxy  ·  listener", DIM, 12)+
+box(340, 130, 320, 52, "Burp CA signs shop.test leaf", "", "burp")+
+box(340, 200, 320, 52, "2. TLS session A  (browser)")+
+box(340, 272, 320, 52, "3. HTTP plaintext here", "", "burp")+
+box(340, 344, 320, 52, "4. TLS session B  (origin)")+
+label(500, 430, "Session A ≠ Session B", INK, 13, "middle", "700")+
+label(500, 456, "Has: Burp CA key, interception certs, HTTP between hops", DIM, 12)+
+label(500, 478, "Does not have: origin private key, original end-to-end TLS secrets", DIM, 12)+
+label(500, 510, "Browser trusts Burp because Burp CA is in the trust store.", DIM, 12)+
+label(500, 532, "Burp does not need shop.test’s private key.", DIM, 12)+
+arrow(200, 250, 280, 250)+
+arrow(720, 370, 820, 370)+
+box(800, 335, 160, 70, "shop.test")+
 label(880, 430, "real certificate", DIM, 11)+
 label(880, 448, "real private key", DIM, 11),
-"Full Burp HTTPS interception architecture with two TLS sessions")
+"Full Burp HTTPS interception architecture with two independent TLS sessions")
+
+files["d-handshake.svg"] = svg(1000, 420, defs()+title("Conceptual TLS handshake — session A only")+
+label(180, 70, "Browser", INK, 14, "middle", "700")+
+label(820, 70, "Burp", INK, 14, "middle", "700")+
+arrow(260, 110, 740, 110)+
+label(500, 100, "ClientHello   SNI=shop.test (if present)   ALPN=h2,http/1.1", DIM, 12)+
+arrow(740, 155, 260, 155)+
+label(500, 145, "ServerHello", DIM, 12)+
+arrow(740, 200, 260, 200)+
+label(500, 190, "Certificate  —  Burp-generated leaf for shop.test", DIM, 12)+
+arrow(740, 245, 260, 245)+
+label(500, 235, "key-exchange data  (conceptual; 1.2 vs 1.3 differ)", DIM, 12)+
+arrow(260, 290, 740, 290)+
+label(500, 280, "Finished", DIM, 12)+
+arrow(260, 345, 740, 345)+
+label(500, 335, "encrypted HTTP  (session A traffic keys)", RED, 12)+
+label(500, 390, "Not a packet capture. Session B is a separate handshake with the origin.", DIM, 13),
+"Conceptual Browser to Burp TLS handshake on session A")
+
+files["d-untrusted.svg"] = svg(1000, 340, defs()+title("Why a random attacker cannot MITM HTTPS")+
+box(80, 70, 380, 180, "Burp CA trusted", "signs shop.test leaf → browser accepts", "ok")+
+box(540, 70, 380, 180, "Attacker CA not trusted", "same shape of cert → validation fails")+
+label(270, 280, "CA in trust store", OK, 13)+
+label(730, 280, "certificate validation failure", RED, 13)+
+label(500, 320, "Burp works because you explicitly trust Burp’s CA — not because the leaf “looks real.”", DIM, 13),
+"Trusted Burp CA versus untrusted attacker CA")
 
 files["d-packet.svg"] = svg(1000, 480, defs()+title("Packet flow 1–12")+
 "".join(
@@ -222,7 +251,7 @@ files["d-packet.svg"] = svg(1000, 480, defs()+title("Packet flow 1–12")+
     for i, t in enumerate([
         "CONNECT shop.test:443",
         "200 Connection Established",
-        "ClientHello + SNI (+ ALPN)",
+        "ClientHello (+ SNI if present, ALPN)",
         "Burp per-host certificate (issuer = Burp CA)",
         "TLS handshake completes → session A",
         "Encrypted HTTP request on A",
