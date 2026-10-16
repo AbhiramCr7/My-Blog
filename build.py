@@ -32,7 +32,7 @@ POSTS = [
          img="post-burp.jpg", log="01",
          card_title="How Burp Suite Intercepts HTTPS: Two TLS Sessions, CA and On-the-Fly Certificates",
          card_tags=["Burp Suite", "HTTPS", "TLS"],
-         alt="Burp Suite lightning mark on a dark red field"),
+         alt="Browser, Burp proxy, and target server with two TLS tunnels"),
 ]
 
 RENDER_JS = r"""
@@ -235,7 +235,7 @@ def card(p, featured):
     tags = "\n".join(f'                <li><a href="tags.html#{slug(t)}">{t}</a></li>' for t in p["card_tags"])
     return f'''        <li class="post-card{' post-card--featured' if featured else ''}">
           <figure class="post-cover">
-            <img src="assets/{p['img']}?v=3" alt="{esc(p['alt'])}" width="1000" height="562" loading="lazy">
+            <img src="assets/{p['img']}?v=4" alt="{esc(p['alt'])}" width="1000" height="562" loading="lazy">
             <span class="post-index">LOG {p['log']}</span>
           </figure>
           <div class="post-body">
@@ -297,7 +297,7 @@ for p in POSTS:
     body = f'''  <main id="main" class="container container--panel page-offset">
     <article class="prose panel glass">
       <figure class="post-hero-image">
-        <img src="assets/{p['img']}?v=3" alt="{esc(p['alt'])}" width="1000" height="562">
+        <img src="assets/{p['img']}?v=4" alt="{esc(p['alt'])}" width="1000" height="562">
       </figure>
       <header class="post-header">
         <p class="post-meta">
@@ -345,7 +345,7 @@ for p in posts:
     tl="".join(f'<li data-tag="{slug(t)}">{t}</li>' for t in p["tags"])
     rows.append(f'''        <li class="tag-row" data-tags="{' '.join(slug(t) for t in p['tags'])}">
           <a href="{p['url']}">
-            <img src="assets/{p['img']}?v=3" alt="" width="1000" height="562" loading="lazy">
+            <img src="assets/{p['img']}?v=4" alt="" width="1000" height="562" loading="lazy">
             <div>
               <p class="post-log"><time datetime="{p['date']}">{p['date']}</time></p>
               <h2>{p['title']}</h2>
