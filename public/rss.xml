@@ -3,12 +3,12 @@
 <channel>
   <title>0xAbhiram Blog</title>
   <link>https://0xabhiram-blogs.vercel.app</link>
-  <description>0xAbhiram Blog - Product Security Engineer Abhiram SS. Burp Under the Hood: how Burp terminates TLS, rebuilds trust, and intercepts encrypted traffic.</description>
+  <description>0xAbhiram Blog - Product Security Engineer Abhiram SS. The HTTPS Illusion: how Burp terminates TLS, rebuilds trust, and intercepts encrypted traffic.</description>
   <language>en-us</language>
   <lastBuildDate>Fri, 16 Oct 2026 10:00:00 +0530</lastBuildDate>
   <managingEditor>abhiram6542@gmail.com (Abhiram SS)</managingEditor>
   <item>
-    <title>Burp Under the Hood</title>
+    <title>The HTTPS Illusion</title>
     <link>https://0xabhiram-blogs.vercel.app/post-burp.html</link>
     <guid isPermaLink="true">https://0xabhiram-blogs.vercel.app/post-burp.html</guid>
     <pubDate>Fri, 16 Oct 2026 10:00:00 +0530</pubDate>
