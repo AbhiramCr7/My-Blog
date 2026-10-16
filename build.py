@@ -30,7 +30,7 @@ OUT = os.path.join(HERE, "public")
 POSTS = [
     dict(md="how-burp-proxy-encryption-works.md", page="post-burp.html", path="~/blog/burp-proxy",
          img="post-burp.jpg", log="01",
-         card_title="Burp Under the Hood",
+         card_title="The HTTPS Illusion",
          card_tags=["Burp Suite", "HTTPS", "TLS"],
          alt="Browser, Burp proxy, and target server with two TLS tunnels"),
 ]
@@ -277,7 +277,7 @@ index_body=f'''  <header class="hero">
 {cards}
     </section>
   </main>'''
-home_desc = "0xAbhiram Blog - Product Security Engineer Abhiram SS. How Burp Suite intercepts HTTPS: CONNECT, Burp CA, on-the-fly certificates, and two TLS sessions."
+home_desc = "0xAbhiram Blog - Product Security Engineer Abhiram SS. The HTTPS Illusion: how Burp terminates TLS, rebuilds trust, and intercepts encrypted traffic."
 home_ld = {
     "@context": "https://schema.org",
     "@graph": [
