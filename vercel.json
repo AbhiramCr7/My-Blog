@@ -1,0 +1,7 @@
+{
+  "framework": null,
+  "installCommand": "echo \"static site — nothing to install\"",
+  "buildCommand": "echo \"public/ is prebuilt with npm run build\"",
+  "outputDirectory": "public",
+  "cleanUrls": false
+}

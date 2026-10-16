@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://my-blog-beta-rosy.vercel.app/sitemap.xml

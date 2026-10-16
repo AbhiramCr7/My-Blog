@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>0xAbhiram Blog — Red Teaming &amp; Product Security by Abhiram SS</title>
+  <meta name="description" content="0xAbhiram Blog — red teaming, Active Directory, product security and GRC automation notes by Abhiram SS (0xAbhiram).">
+  <meta name="author" content="Abhiram SS (0xAbhiram)">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta property="og:site_name" content="0xAbhiram Blog">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="0xAbhiram Blog — Red Teaming &amp; Product Security by Abhiram SS">
+  <meta property="og:description" content="0xAbhiram Blog — red teaming, Active Directory, product security and GRC automation notes by Abhiram SS (0xAbhiram).">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@0xabhiram">
+  <link rel="canonical" href="https://my-blog-beta-rosy.vercel.app/">
+  <meta property="og:url" content="https://my-blog-beta-rosy.vercel.app/">
+  <meta property="og:image" content="https://my-blog-beta-rosy.vercel.app/assets/banner-desk.jpg">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "0xAbhiram Blog", "alternateName": ["0xAbhiram", "0xAbhiram Blogs"], "description": "0xAbhiram Blog — red teaming, Active Directory, product security and GRC automation notes by Abhiram SS (0xAbhiram).", "url": "https://my-blog-beta-rosy.vercel.app/", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}}, {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"], "jobTitle": "Security Engineer", "knowsAbout": ["Red Teaming", "VAPT", "Penetration Testing", "Product Security", "Cloud Security", "Active Directory"]}, {"@type": "Blog", "name": "0xAbhiram Blog", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}, "blogPost": [{"@type": "BlogPosting", "headline": "How My Team Uses Claude to Automate GRC Work — TPRM Sheets, Security Questionnaires, and Shared AI Workflows", "datePublished": "2026-06-28", "url": "https://my-blog-beta-rosy.vercel.app/post-grc.html"}, {"@type": "BlogPosting", "headline": "Active Directory Fundamentals: Architecture, Identity, and How AD Really Works", "datePublished": "2025-12-27", "url": "https://my-blog-beta-rosy.vercel.app/post-active-directory.html"}, {"@type": "BlogPosting", "headline": "Red Teams Don't Hack Systems — They Hack Trust", "datePublished": "2025-12-25", "url": "https://my-blog-beta-rosy.vercel.app/post-trust.html"}]}]}</script>
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0c0507">
+  <script>(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var n=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0],t=n?n.type:"navigate",inside=false;try{inside=!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(e){}if(t==="reload"||(t==="navigate"&&!inside))document.documentElement.classList.add("intro","hero-wait")})()</script>
+  <link rel="preload" as="image" href="assets/banner-desk.jpg">
+  <link rel="stylesheet" href="styles.css">
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="splash" aria-hidden="true">
+    <div class="sp-glow"></div>
+    <div class="sp-content">
+      <svg class="sp-sign" viewBox="0 0 1000 220">
+        <defs>
+          <linearGradient id="sp-fill" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#ffd9dd"/>
+            <stop offset="0.5" stop-color="#ffffff"/>
+            <stop offset="1" stop-color="#ff9aa5"/>
+          </linearGradient>
+          <linearGradient id="sp-shine" gradientUnits="userSpaceOnUse" x1="-400" x2="-100" y1="0" y2="0">
+            <stop offset="0" stop-color="#ff5468" stop-opacity="0"/>
+            <stop offset="0.5" stop-color="#ff5468" stop-opacity="0.95"/>
+            <stop offset="1" stop-color="#ff5468" stop-opacity="0"/>
+            <animate attributeName="x1" from="-400" to="1000" dur="0.8s" begin="1.55s" fill="freeze"/>
+            <animate attributeName="x2" from="-100" to="1300" dur="0.8s" begin="1.55s" fill="freeze"/>
+          </linearGradient>
+        </defs>
+        <text class="sp-stroke" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
+        <text class="sp-shine" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
+      </svg>
+      <p class="sp-tag">Security Engineer Journal</p>
+    </div>
+    <div class="sp-foot">
+      <span>settling in for the night shift</span>
+      <div class="sp-bar"><i></i></div>
+    </div>
+  </div>
+  <div class="ambient" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <nav class="site-nav on-hero" aria-label="Primary">
+    <a class="brand" href="index.html" aria-label="0xAbhiram journal, home">
+      <span class="prompt-user">abhiram</span><span class="prompt-at">@</span><span class="prompt-host">journal</span><span class="prompt-sep">:</span><span class="prompt-path">~/blog</span><span class="prompt-dollar">$</span><span class="cursor" aria-hidden="true">_</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" aria-current="page"><span class="nav-num">01</span><span class="nav-label">Blog</span></a></li>
+      <li><a href="tags.html"><span class="nav-num">02</span><span class="nav-label">Tags</span></a></li>
+      <li><a href="contact.html"><span class="nav-num">03</span><span class="nav-label">Contact</span></a></li>
+    </ul>
+    <div class="nav-clock" aria-label="Local time in India">
+      <span class="live-dot" aria-hidden="true"></span><span class="clock-zone">IST</span><time data-clock>--:--:--</time>
+    </div>
+    <div class="nav-progress" aria-hidden="true"></div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">
+        <span class="sr-only">0xAbhiram</span>
+        <span class="hero-name" aria-hidden="true"><span class="ch" style="--i:0">0</span><span class="ch" style="--i:1">x</span><span class="ch" style="--i:2">A</span><span class="ch" style="--i:3">b</span><span class="ch" style="--i:4">h</span><span class="ch" style="--i:5">i</span><span class="ch" style="--i:6">r</span><span class="ch" style="--i:7">a</span><span class="ch" style="--i:8">m</span></span>
+      </h1>
+      <div class="hero-rule" aria-hidden="true"></div>
+      <p class="hero-tagline">
+        <span class="sr-only">Security Engineer Journal</span>
+        <span class="typed" aria-hidden="true">Security Engineer Journal</span>
+      </p>
+    </div>
+    <a class="scroll-cue" href="#articles" aria-label="Scroll to articles">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
+    </a>
+  </header>
+
+  <main id="main">
+    <section id="articles" class="container container--grid" aria-labelledby="articles-heading">
+      <div class="section-head">
+        <h2 id="articles-heading" class="section-label">Latest writing</h2>
+        <span class="section-count">3 entries</span>
+      </div>
+
+      <ol class="post-grid" reversed>
+        <li class="post-card post-card--featured">
+          <figure class="post-cover">
+            <img src="assets/post-grc.jpg?v=2" alt="A night desk where a glowing red AI streams a tall stack of vendor questionnaires into a laptop and out as neatly checked forms" width="1000" height="562" loading="lazy">
+            <span class="post-index">LOG 03</span>
+          </figure>
+          <div class="post-body">
+            <p class="post-log"><time datetime="2026-06-28">2026-06-28</time> · 8 min read</p>
+            <h3><a href="post-grc.html">How My Team Uses Claude to Automate GRC Work</a></h3>
+            <p>How we use Claude Cowork to automate TPRM questionnaire responses — cutting completion time from 4 hours to 30 minutes with policy-grounded, consistent answers.</p>
+            <div class="post-foot">
+              <ul class="tags" aria-label="Tags">
+                <li><a href="tags.html#grc">GRC</a></li>
+                <li><a href="tags.html#tprm">TPRM</a></li>
+                <li><a href="tags.html#security-automation">Security Automation</a></li>
+              </ul>
+              <span class="read-more" aria-hidden="true">read <span>→</span></span>
+            </div>
+          </div>
+        </li>
+
+        <li class="post-card">
+          <figure class="post-cover">
+            <img src="assets/post-ad.jpg?v=2" alt="A glowing domain controller tower branching into domains, organizational units and users, with a key and ticket floating beside it" width="1000" height="562" loading="lazy">
+            <span class="post-index">LOG 02</span>
+          </figure>
+          <div class="post-body">
+            <p class="post-log"><time datetime="2025-12-27">2025-12-27</time> · 7 min read</p>
+            <h3><a href="post-active-directory.html">Active Directory Fundamentals: Architecture, Identity, and How AD Really Works</a></h3>
+            <p>A foundational red team–oriented breakdown of Active Directory architecture, identity flows, and trust relationships that attackers abuse in real-world enterprise compromises.</p>
+            <div class="post-foot">
+              <ul class="tags" aria-label="Tags">
+                <li><a href="tags.html#active-directory">Active Directory</a></li>
+                <li><a href="tags.html#kerberos">Kerberos</a></li>
+              </ul>
+              <span class="read-more" aria-hidden="true">read <span>→</span></span>
+            </div>
+          </div>
+        </li>
+
+        <li class="post-card">
+          <figure class="post-cover">
+            <img src="assets/post-trust.jpg?v=2" alt="A handshake hiding a lockpick in front of a glowing chain with one cracked link" width="1000" height="562" loading="lazy">
+            <span class="post-index">LOG 01</span>
+          </figure>
+          <div class="post-body">
+            <p class="post-log"><time datetime="2025-12-25">2025-12-25</time> · 6 min read</p>
+            <h3><a href="post-trust.html">Red Teams Don't Hack Systems — They Hack Trust</a></h3>
+            <p>A deep analysis of why real-world compromises succeed by abusing trust assumptions rather than exploiting isolated vulnerabilities.</p>
+            <div class="post-foot">
+              <ul class="tags" aria-label="Tags">
+                <li><a href="tags.html#red-team">Red Team</a></li>
+                <li><a href="tags.html#trust-boundaries">Trust Boundaries</a></li>
+              </ul>
+              <span class="read-more" aria-hidden="true">read <span>→</span></span>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <section class="footer-cta">
+        <h2>Got a story about <em>trust</em> gone wrong?</h2>
+        <a class="cta-btn" href="contact.html">Open a channel <span aria-hidden="true">→</span></a>
+      </section>
+
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="footer-logo" href="index.html"><span>&gt;_</span> 0xAbhiram</a>
+          <p>Notes on red teaming and product security.</p>
+        </div>
+        <nav class="footer-col" aria-label="Footer">
+          <h2>Navigate</h2>
+          <ul>
+            <li><a href="index.html">Blog</a></li>
+            <li><a href="tags.html">Tags</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="footer-col">
+          <h2>Connect</h2>
+          <ul>
+            <li><a href="https://github.com/0xabhiram" rel="me">GitHub ↗</a></li>
+            <li><a href="https://x.com/0xabhiram" rel="me">X ↗</a></li>
+            <li><a href="mailto:abhiram6542@gmail.com">Email</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <dl class="footer-stats">
+        <div class="stat"><dt class="stat-label">Uptime</dt><dd class="stat-value" data-uptime="2024-12-24T15:30:00+05:30">—</dd></div>
+        <div class="stat"><dt class="stat-label">Your session</dt><dd class="stat-value" data-session>00:00:00</dd></div>
+        <div class="stat"><dt class="stat-label">Local time · IST</dt><dd class="stat-value" data-clock>--:--:--</dd></div>
+        <div class="stat"><dt class="stat-label">Moon tonight</dt><dd class="stat-value"><span class="moon-ico" data-moon-ico aria-hidden="true"></span><span data-moon>—</span></dd></div>
+      </dl>
+
+      <div class="footer-bottom">
+        <span>© 2026 Abhiram SS</span>
+        <button class="to-top" type="button">cd ~ ↑</button>
+      </div>
+    </div>
+  </footer>
+  <canvas class="embers" aria-hidden="true"></canvas>
+</body>
+</html>
