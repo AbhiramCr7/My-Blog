@@ -1,5 +1,5 @@
 ---
-title: "The HTTPS Illusion"
+title: "Burp Under the Hood"
 date: 2026-10-16 23:50:00 +0530
 author: 0xAbhiram
 tags:
@@ -15,6 +15,8 @@ categories:
   - Security Engineering
 description: "How Burp terminates TLS, rebuilds trust, and intercepts encrypted traffic"
 ---
+
+## The HTTPS Illusion
 
 HTTPS looks like one encrypted pipe from the browser to the destination. That is the illusion. The lock in the address bar means the browser completed TLS with *someone it trusts*. It does not mean the TLS peer is the origin you had in mind.
 

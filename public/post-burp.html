@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>The HTTPS Illusion | 0xAbhiram Blog</title>
+  <title>Burp Under the Hood | 0xAbhiram Blog</title>
   <meta name="description" content="How Burp terminates TLS, rebuilds trust, and intercepts encrypted traffic">
   <meta name="author" content="Abhiram SS (0xAbhiram)">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <meta property="og:site_name" content="0xAbhiram Blog">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="The HTTPS Illusion | 0xAbhiram Blog">
+  <meta property="og:title" content="Burp Under the Hood | 0xAbhiram Blog">
   <meta property="og:description" content="How Burp terminates TLS, rebuilds trust, and intercepts encrypted traffic">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@0xabhiram">
@@ -18,7 +18,7 @@
   <link rel="canonical" href="https://0xabhiram-blogs.vercel.app/post-burp.html">
   <meta property="og:url" content="https://0xabhiram-blogs.vercel.app/post-burp.html">
   <meta property="og:image" content="https://0xabhiram-blogs.vercel.app/assets/post-burp.jpg">
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "The HTTPS Illusion", "description": "How Burp terminates TLS, rebuilds trust, and intercepts encrypted traffic", "datePublished": "2026-10-16", "dateModified": "2026-10-16", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}, "publisher": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}, "keywords": "Burp Suite, HTTPS, TLS, Proxy, Product Security, Web Security, HTTP/2, Certificate Pinning", "image": "https://0xabhiram-blogs.vercel.app/assets/post-burp.jpg", "url": "https://0xabhiram-blogs.vercel.app/post-burp.html", "mainEntityOfPage": "https://0xabhiram-blogs.vercel.app/post-burp.html"}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Burp Under the Hood", "description": "How Burp terminates TLS, rebuilds trust, and intercepts encrypted traffic", "datePublished": "2026-10-16", "dateModified": "2026-10-16", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}, "publisher": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}, "keywords": "Burp Suite, HTTPS, TLS, Proxy, Product Security, Web Security, HTTP/2, Certificate Pinning", "image": "https://0xabhiram-blogs.vercel.app/assets/post-burp.jpg", "url": "https://0xabhiram-blogs.vercel.app/post-burp.html", "mainEntityOfPage": "https://0xabhiram-blogs.vercel.app/post-burp.html"}</script>
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0c0507">
   <script>(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var n=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0],t=n?n.type:"navigate",inside=false;try{inside=!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(e){}if(t==="reload"||(t==="navigate"&&!inside))document.documentElement.classList.add("intro","hero-wait")})()</script>
@@ -83,10 +83,11 @@
         <p class="post-meta">
           <time datetime="2026-10-16">October 16, 2026</time> · 9 min read
         </p>
-        <h1>The HTTPS Illusion</h1>
+        <h1>Burp Under the Hood</h1>
         <p class="lede">How Burp terminates TLS, rebuilds trust, and intercepts encrypted traffic</p>
       </header>
 
+<h2>The HTTPS Illusion</h2>
 <p>HTTPS looks like one encrypted pipe from the browser to the destination. That is the illusion. The lock in the address bar means the browser completed TLS with <em>someone it trusts</em>. It does not mean the TLS peer is the origin you had in mind.</p>
 <p><strong>Normally</strong></p>
 <pre><code>Browser  ───────── TLS ─────────&gt;  Server
