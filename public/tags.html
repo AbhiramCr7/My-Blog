@@ -77,7 +77,7 @@
       <header class="page-head">
         <p class="page-cmd">ls ~/tags --sort=count</p>
         <h1 class="page-title">Tags</h1>
-        <p class="page-sub">18 tags across 4 logs. Pick a tag or grep for a topic to filter the archive.</p>
+        <p class="page-sub">6 tags across 1 logs. Pick a tag or grep for a topic to filter the archive.</p>
       </header>
 
       <section class="tag-console" aria-label="Filter posts">
@@ -86,71 +86,26 @@
           <input id="tag-search" type="search" placeholder="kerberos, red team, trust…" autocomplete="off" aria-label="Search tags and posts">
         </label>
         <div class="tag-cloud" role="group" aria-label="Tags">
-          <button class="tag-chip" type="button" data-tag="all" aria-pressed="true">all <span class="tag-count">4</span></button>
-          <button class="tag-chip" type="button" data-tag="red-team" aria-pressed="false" style="--w:2">Red Team <span class="tag-count">3</span></button>
-          <button class="tag-chip" type="button" data-tag="trust-boundaries" aria-pressed="false" style="--w:2">Trust Boundaries <span class="tag-count">3</span></button>
-          <button class="tag-chip" type="button" data-tag="active-directory" aria-pressed="false" style="--w:2">Active Directory <span class="tag-count">2</span></button>
-          <button class="tag-chip" type="button" data-tag="ad-security" aria-pressed="false" style="--w:2">AD Security <span class="tag-count">2</span></button>
-          <button class="tag-chip" type="button" data-tag="enterprise-security" aria-pressed="false" style="--w:2">Enterprise Security <span class="tag-count">2</span></button>
-          <button class="tag-chip" type="button" data-tag="identity-security" aria-pressed="false" style="--w:2">Identity Security <span class="tag-count">2</span></button>
-          <button class="tag-chip" type="button" data-tag="kerberos" aria-pressed="false" style="--w:2">Kerberos <span class="tag-count">2</span></button>
-          <button class="tag-chip" type="button" data-tag="adversarial-thinking" aria-pressed="false" style="--w:1">Adversarial Thinking <span class="tag-count">1</span></button>
-          <button class="tag-chip" type="button" data-tag="ai" aria-pressed="false" style="--w:1">AI <span class="tag-count">1</span></button>
-          <button class="tag-chip" type="button" data-tag="appsec" aria-pressed="false" style="--w:1">AppSec <span class="tag-count">1</span></button>
-          <button class="tag-chip" type="button" data-tag="breach-analysis" aria-pressed="false" style="--w:1">Breach Analysis <span class="tag-count">1</span></button>
-          <button class="tag-chip" type="button" data-tag="claude" aria-pressed="false" style="--w:1">Claude <span class="tag-count">1</span></button>
-          <button class="tag-chip" type="button" data-tag="cowork" aria-pressed="false" style="--w:1">Cowork <span class="tag-count">1</span></button>
-          <button class="tag-chip" type="button" data-tag="grc" aria-pressed="false" style="--w:1">GRC <span class="tag-count">1</span></button>
-          <button class="tag-chip" type="button" data-tag="ldap" aria-pressed="false" style="--w:1">LDAP <span class="tag-count">1</span></button>
+          <button class="tag-chip" type="button" data-tag="all" aria-pressed="true">all <span class="tag-count">1</span></button>
+          <button class="tag-chip" type="button" data-tag="burp-suite" aria-pressed="false" style="--w:1">Burp Suite <span class="tag-count">1</span></button>
+          <button class="tag-chip" type="button" data-tag="https" aria-pressed="false" style="--w:1">HTTPS <span class="tag-count">1</span></button>
           <button class="tag-chip" type="button" data-tag="product-security" aria-pressed="false" style="--w:1">Product Security <span class="tag-count">1</span></button>
-          <button class="tag-chip" type="button" data-tag="security-automation" aria-pressed="false" style="--w:1">Security Automation <span class="tag-count">1</span></button>
-          <button class="tag-chip" type="button" data-tag="tprm" aria-pressed="false" style="--w:1">TPRM <span class="tag-count">1</span></button>
+          <button class="tag-chip" type="button" data-tag="proxy" aria-pressed="false" style="--w:1">Proxy <span class="tag-count">1</span></button>
+          <button class="tag-chip" type="button" data-tag="tls" aria-pressed="false" style="--w:1">TLS <span class="tag-count">1</span></button>
+          <button class="tag-chip" type="button" data-tag="web-security" aria-pressed="false" style="--w:1">Web Security <span class="tag-count">1</span></button>
         </div>
       </section>
 
-      <p class="result-line" aria-live="polite">&gt; <b id="result-count">4</b> match(es) for <b id="result-label">all tags</b></p>
+      <p class="result-line" aria-live="polite">&gt; <b id="result-count">1</b> match(es) for <b id="result-label">all tags</b></p>
 
       <ul class="tag-results">
-        <li class="tag-row" data-tags="kerberos active-directory red-team identity-security ad-security enterprise-security trust-boundaries">
-          <a href="post-kerberos.html">
-            <img src="assets/post-kerberos.jpg?v=2" alt="" width="1000" height="562" loading="lazy">
+        <li class="tag-row" data-tags="burp-suite proxy tls https product-security web-security">
+          <a href="post-burp.html">
+            <img src="assets/post-burp.jpg?v=2" alt="" width="1000" height="562" loading="lazy">
             <div>
               <p class="post-log"><time datetime="2026-10-16">2026-10-16</time></p>
-              <h2>Kerberos Attacks: How Identity Tickets Become Paths Through AD</h2>
-              <ul class="row-tags"><li data-tag="kerberos">Kerberos</li><li data-tag="active-directory">Active Directory</li><li data-tag="red-team">Red Team</li><li data-tag="identity-security">Identity Security</li><li data-tag="ad-security">AD Security</li><li data-tag="enterprise-security">Enterprise Security</li><li data-tag="trust-boundaries">Trust Boundaries</li></ul>
-            </div>
-            <span class="row-arrow" aria-hidden="true">→</span>
-          </a>
-        </li>
-        <li class="tag-row" data-tags="grc tprm claude ai security-automation cowork appsec">
-          <a href="post-grc.html">
-            <img src="assets/post-grc.jpg?v=2" alt="" width="1000" height="562" loading="lazy">
-            <div>
-              <p class="post-log"><time datetime="2026-06-28">2026-06-28</time></p>
-              <h2>How My Team Uses Claude to Automate GRC Work</h2>
-              <ul class="row-tags"><li data-tag="grc">GRC</li><li data-tag="tprm">TPRM</li><li data-tag="claude">Claude</li><li data-tag="ai">AI</li><li data-tag="security-automation">Security Automation</li><li data-tag="cowork">Cowork</li><li data-tag="appsec">AppSec</li></ul>
-            </div>
-            <span class="row-arrow" aria-hidden="true">→</span>
-          </a>
-        </li>
-        <li class="tag-row" data-tags="active-directory ad-security red-team identity-security enterprise-security kerberos ldap trust-boundaries">
-          <a href="post-active-directory.html">
-            <img src="assets/post-ad.jpg?v=2" alt="" width="1000" height="562" loading="lazy">
-            <div>
-              <p class="post-log"><time datetime="2025-12-27">2025-12-27</time></p>
-              <h2>Active Directory Fundamentals: Architecture, Identity, and How AD Really Works</h2>
-              <ul class="row-tags"><li data-tag="active-directory">Active Directory</li><li data-tag="ad-security">AD Security</li><li data-tag="red-team">Red Team</li><li data-tag="identity-security">Identity Security</li><li data-tag="enterprise-security">Enterprise Security</li><li data-tag="kerberos">Kerberos</li><li data-tag="ldap">LDAP</li><li data-tag="trust-boundaries">Trust Boundaries</li></ul>
-            </div>
-            <span class="row-arrow" aria-hidden="true">→</span>
-          </a>
-        </li>
-        <li class="tag-row" data-tags="red-team product-security trust-boundaries breach-analysis adversarial-thinking">
-          <a href="post-trust.html">
-            <img src="assets/post-trust.jpg?v=2" alt="" width="1000" height="562" loading="lazy">
-            <div>
-              <p class="post-log"><time datetime="2025-12-25">2025-12-25</time></p>
-              <h2>Red Teams Don't Hack Systems — They Hack Trust</h2>
-              <ul class="row-tags"><li data-tag="red-team">Red Team</li><li data-tag="product-security">Product Security</li><li data-tag="trust-boundaries">Trust Boundaries</li><li data-tag="breach-analysis">Breach Analysis</li><li data-tag="adversarial-thinking">Adversarial Thinking</li></ul>
+              <h2>How Burp Proxy Encrypts and Decrypts HTTPS</h2>
+              <ul class="row-tags"><li data-tag="burp-suite">Burp Suite</li><li data-tag="proxy">Proxy</li><li data-tag="tls">TLS</li><li data-tag="https">HTTPS</li><li data-tag="product-security">Product Security</li><li data-tag="web-security">Web Security</li></ul>
             </div>
             <span class="row-arrow" aria-hidden="true">→</span>
           </a>

@@ -839,6 +839,13 @@ main,
 .prose ul,
 .prose ol { margin-bottom: 0; }
 
+.prose img {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgb(255 84 104 / 0.22);
+  background: #14060a;
+}
+
 .prose ul,
 .prose ol { padding-left: 1.25em; }
 .prose li + li { margin-top: 0.4em; }

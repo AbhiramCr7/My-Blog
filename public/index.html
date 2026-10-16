@@ -4,21 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>0xAbhiram Blog — Product Security Engineer Abhiram SS</title>
-  <meta name="description" content="0xAbhiram Blog — Product Security Engineer Abhiram SS writing on red teaming, Active Directory, Kerberos, and GRC automation.">
+  <meta name="description" content="0xAbhiram Blog — Product Security Engineer Abhiram SS. How Burp Proxy encrypts and decrypts HTTPS, with the full traffic path.">
   <meta name="author" content="Abhiram SS (0xAbhiram)">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <meta property="og:site_name" content="0xAbhiram Blog">
   <meta property="og:type" content="website">
   <meta property="og:title" content="0xAbhiram Blog — Product Security Engineer Abhiram SS">
-  <meta property="og:description" content="0xAbhiram Blog — Product Security Engineer Abhiram SS writing on red teaming, Active Directory, Kerberos, and GRC automation.">
+  <meta property="og:description" content="0xAbhiram Blog — Product Security Engineer Abhiram SS. How Burp Proxy encrypts and decrypts HTTPS, with the full traffic path.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@0xabhiram">
   <link rel="alternate" type="application/rss+xml" title="0xAbhiram Blog" href="/rss.xml">
   <link rel="canonical" href="https://0xabhiram-blogs.vercel.app/">
   <meta property="og:url" content="https://0xabhiram-blogs.vercel.app/">
   <meta property="og:image" content="https://0xabhiram-blogs.vercel.app/assets/banner-desk.jpg">
-  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "0xAbhiram Blog", "alternateName": ["0xAbhiram", "0xAbhiram Blogs"], "description": "0xAbhiram Blog — Product Security Engineer Abhiram SS writing on red teaming, Active Directory, Kerberos, and GRC automation.", "url": "https://0xabhiram-blogs.vercel.app/", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}}, {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"], "jobTitle": "Product Security Engineer", "knowsAbout": ["Product Security", "Red Teaming", "VAPT", "Penetration Testing", "Cloud Security", "Active Directory", "Kerberos"]}, {"@type": "Blog", "name": "0xAbhiram Blog", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}, "blogPost": [{"@type": "BlogPosting", "headline": "Kerberos Attacks: How Identity Tickets Become Paths Through Active Directory", "datePublished": "2026-10-16", "url": "https://0xabhiram-blogs.vercel.app/post-kerberos.html"}, {"@type": "BlogPosting", "headline": "How My Team Uses Claude to Automate GRC Work — TPRM Sheets, Security Questionnaires, and Shared AI Workflows", "datePublished": "2026-06-28", "url": "https://0xabhiram-blogs.vercel.app/post-grc.html"}, {"@type": "BlogPosting", "headline": "Active Directory Fundamentals: Architecture, Identity, and How AD Really Works", "datePublished": "2025-12-27", "url": "https://0xabhiram-blogs.vercel.app/post-active-directory.html"}, {"@type": "BlogPosting", "headline": "Red Teams Don't Hack Systems — They Hack Trust", "datePublished": "2025-12-25", "url": "https://0xabhiram-blogs.vercel.app/post-trust.html"}]}]}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "0xAbhiram Blog", "alternateName": ["0xAbhiram", "0xAbhiram Blogs"], "description": "0xAbhiram Blog — Product Security Engineer Abhiram SS. How Burp Proxy encrypts and decrypts HTTPS, with the full traffic path.", "url": "https://0xabhiram-blogs.vercel.app/", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}}, {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"], "jobTitle": "Product Security Engineer", "knowsAbout": ["Product Security", "Red Teaming", "VAPT", "Penetration Testing", "Cloud Security", "Active Directory", "Kerberos"]}, {"@type": "Blog", "name": "0xAbhiram Blog", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}, "blogPost": [{"@type": "BlogPosting", "headline": "How Burp Proxy Encrypts and Decrypts HTTPS (the full traffic path)", "datePublished": "2026-10-16", "url": "https://0xabhiram-blogs.vercel.app/post-burp.html"}]}]}</script>
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0c0507">
   <script>(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var n=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0],t=n?n.type:"navigate",inside=false;try{inside=!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(e){}if(t==="reload"||(t==="navigate"&&!inside))document.documentElement.classList.add("intro","hero-wait")})()</script>
@@ -92,82 +92,24 @@
     <section id="articles" class="container container--grid" aria-labelledby="articles-heading">
       <div class="section-head">
         <h2 id="articles-heading" class="section-label">Latest writing</h2>
-        <span class="section-count">4 entries</span>
+        <span class="section-count">1 entries</span>
       </div>
 
       <ol class="post-grid" reversed>
         <li class="post-card post-card--featured">
           <figure class="post-cover">
-            <img src="assets/post-kerberos.jpg?v=2" alt="A golden Kerberos ticket floating in front of a dark domain controller, with smaller silver tickets orbiting it" width="1000" height="562" loading="lazy">
-            <span class="post-index">LOG 04</span>
-          </figure>
-          <div class="post-body">
-            <p class="post-log"><time datetime="2026-10-16">2026-10-16</time> · 8 min read</p>
-            <h3><a href="post-kerberos.html">Kerberos Attacks: How Identity Tickets Become Paths Through AD</a></h3>
-            <p>A red-team mental model of Kerberos: how TGTs and service tickets work, why Kerberoasting and AS-REP roasting exist by design, and the controls that actually reduce the blast radius.</p>
-            <div class="post-foot">
-              <ul class="tags" aria-label="Tags">
-                <li><a href="tags.html#kerberos">Kerberos</a></li>
-                <li><a href="tags.html#active-directory">Active Directory</a></li>
-                <li><a href="tags.html#identity-security">Identity Security</a></li>
-              </ul>
-              <span class="read-more" aria-hidden="true">read <span>→</span></span>
-            </div>
-          </div>
-        </li>
-
-        <li class="post-card">
-          <figure class="post-cover">
-            <img src="assets/post-grc.jpg?v=2" alt="A night desk where a glowing red AI streams a tall stack of vendor questionnaires into a laptop and out as neatly checked forms" width="1000" height="562" loading="lazy">
-            <span class="post-index">LOG 03</span>
-          </figure>
-          <div class="post-body">
-            <p class="post-log"><time datetime="2026-06-28">2026-06-28</time> · 8 min read</p>
-            <h3><a href="post-grc.html">How My Team Uses Claude to Automate GRC Work</a></h3>
-            <p>How we use Claude Cowork to automate TPRM questionnaire responses — cutting completion time from 4 hours to 30 minutes with policy-grounded, consistent answers.</p>
-            <div class="post-foot">
-              <ul class="tags" aria-label="Tags">
-                <li><a href="tags.html#grc">GRC</a></li>
-                <li><a href="tags.html#tprm">TPRM</a></li>
-                <li><a href="tags.html#security-automation">Security Automation</a></li>
-              </ul>
-              <span class="read-more" aria-hidden="true">read <span>→</span></span>
-            </div>
-          </div>
-        </li>
-
-        <li class="post-card">
-          <figure class="post-cover">
-            <img src="assets/post-ad.jpg?v=2" alt="A glowing domain controller tower branching into domains, organizational units and users, with a key and ticket floating beside it" width="1000" height="562" loading="lazy">
-            <span class="post-index">LOG 02</span>
-          </figure>
-          <div class="post-body">
-            <p class="post-log"><time datetime="2025-12-27">2025-12-27</time> · 7 min read</p>
-            <h3><a href="post-active-directory.html">Active Directory Fundamentals: Architecture, Identity, and How AD Really Works</a></h3>
-            <p>A foundational red team–oriented breakdown of Active Directory architecture, identity flows, and trust relationships that attackers abuse in real-world enterprise compromises.</p>
-            <div class="post-foot">
-              <ul class="tags" aria-label="Tags">
-                <li><a href="tags.html#active-directory">Active Directory</a></li>
-                <li><a href="tags.html#kerberos">Kerberos</a></li>
-              </ul>
-              <span class="read-more" aria-hidden="true">read <span>→</span></span>
-            </div>
-          </div>
-        </li>
-
-        <li class="post-card">
-          <figure class="post-cover">
-            <img src="assets/post-trust.jpg?v=2" alt="A handshake hiding a lockpick in front of a glowing chain with one cracked link" width="1000" height="562" loading="lazy">
+            <img src="assets/post-burp.jpg?v=2" alt="Diagram of a browser, Burp Proxy, and a server: decrypt in the middle, encrypt again toward the site" width="1000" height="562" loading="lazy">
             <span class="post-index">LOG 01</span>
           </figure>
           <div class="post-body">
-            <p class="post-log"><time datetime="2025-12-25">2025-12-25</time> · 6 min read</p>
-            <h3><a href="post-trust.html">Red Teams Don't Hack Systems — They Hack Trust</a></h3>
-            <p>A deep analysis of why real-world compromises succeed by abusing trust assumptions rather than exploiting isolated vulnerabilities.</p>
+            <p class="post-log"><time datetime="2026-10-16">2026-10-16</time> · 7 min read</p>
+            <h3><a href="post-burp.html">How Burp Proxy Encrypts and Decrypts HTTPS</a></h3>
+            <p>A plain-English walk through Burp Proxy: where it sits, why HTTPS needs two TLS sessions, how Burp's CA signs fake host certs, and the full request/response path from browser to server.</p>
             <div class="post-foot">
               <ul class="tags" aria-label="Tags">
-                <li><a href="tags.html#red-team">Red Team</a></li>
-                <li><a href="tags.html#trust-boundaries">Trust Boundaries</a></li>
+                <li><a href="tags.html#burp-suite">Burp Suite</a></li>
+                <li><a href="tags.html#tls">TLS</a></li>
+                <li><a href="tags.html#https">HTTPS</a></li>
               </ul>
               <span class="read-more" aria-hidden="true">read <span>→</span></span>
             </div>

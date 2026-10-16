@@ -28,22 +28,11 @@ POSTS_DIR = os.path.join(HERE, "posts")
 OUT = os.path.join(HERE, "public")
 
 POSTS = [
-    dict(md="kerberos-attacks.md", page="post-kerberos.html", path="~/blog/kerberos-attacks",
-         img="post-kerberos.jpg", log="04", card_title="Kerberos Attacks: How Identity Tickets Become Paths Through AD",
-         card_tags=["Kerberos", "Active Directory", "Identity Security"],
-         alt="A golden Kerberos ticket floating in front of a dark domain controller, with smaller silver tickets orbiting it"),
-    dict(md="grc-blog-post.md", page="post-grc.html", path="~/blog/grc-automation",
-         img="post-grc.jpg", log="03", card_title="How My Team Uses Claude to Automate GRC Work",
-         card_tags=["GRC", "TPRM", "Security Automation"],
-         alt="A night desk where a glowing red AI streams a tall stack of vendor questionnaires into a laptop and out as neatly checked forms"),
-    dict(md="Understanding-Active-Directory-from-the-Ground-Up.md", page="post-active-directory.html", path="~/blog/active-directory",
-         img="post-ad.jpg", log="02", card_title=None,
-         card_tags=["Active Directory", "Kerberos"],
-         alt="A glowing domain controller tower branching into domains, organizational units and users, with a key and ticket floating beside it"),
-    dict(md="cybersecurity-101.md", page="post-trust.html", path="~/blog/hacking-trust",
-         img="post-trust.jpg", log="01", card_title=None,
-         card_tags=["Red Team", "Trust Boundaries"],
-         alt="A handshake hiding a lockpick in front of a glowing chain with one cracked link"),
+    dict(md="how-burp-proxy-encryption-works.md", page="post-burp.html", path="~/blog/burp-proxy",
+         img="post-burp.jpg", log="01",
+         card_title="How Burp Proxy Encrypts and Decrypts HTTPS",
+         card_tags=["Burp Suite", "TLS", "HTTPS"],
+         alt="Diagram of a browser, Burp Proxy, and a server: decrypt in the middle, encrypt again toward the site"),
 ]
 
 RENDER_JS = r"""
@@ -288,7 +277,7 @@ index_body=f'''  <header class="hero">
 {cards}
     </section>
   </main>'''
-home_desc = "0xAbhiram Blog — Product Security Engineer Abhiram SS writing on red teaming, Active Directory, Kerberos, and GRC automation."
+home_desc = "0xAbhiram Blog — Product Security Engineer Abhiram SS. How Burp Proxy encrypts and decrypts HTTPS, with the full traffic path."
 home_ld = {
     "@context": "https://schema.org",
     "@graph": [

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How Burp Proxy Encrypts and Decrypts HTTPS (the full traffic path) | 0xAbhiram Blog</title>
+  <meta name="description" content="A plain-English walk through Burp Proxy: where it sits, why HTTPS needs two TLS sessions, how Burp's CA signs fake host certs, and the full request/response path from browser to server.">
+  <meta name="author" content="Abhiram SS (0xAbhiram)">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta property="og:site_name" content="0xAbhiram Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="How Burp Proxy Encrypts and Decrypts HTTPS (the full traffic path) | 0xAbhiram Blog">
+  <meta property="og:description" content="A plain-English walk through Burp Proxy: where it sits, why HTTPS needs two TLS sessions, how Burp's CA signs fake host certs, and the full request/response path from browser to server.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@0xabhiram">
+  <link rel="alternate" type="application/rss+xml" title="0xAbhiram Blog" href="/rss.xml">
+  <link rel="canonical" href="https://0xabhiram-blogs.vercel.app/post-burp.html">
+  <meta property="og:url" content="https://0xabhiram-blogs.vercel.app/post-burp.html">
+  <meta property="og:image" content="https://0xabhiram-blogs.vercel.app/assets/post-burp.jpg">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "How Burp Proxy Encrypts and Decrypts HTTPS (the full traffic path)", "description": "A plain-English walk through Burp Proxy: where it sits, why HTTPS needs two TLS sessions, how Burp's CA signs fake host certs, and the full request/response path from browser to server.", "datePublished": "2026-10-16", "dateModified": "2026-10-16", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}, "publisher": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}, "keywords": "Burp Suite, Proxy, TLS, HTTPS, Product Security, Web Security", "image": "https://0xabhiram-blogs.vercel.app/assets/post-burp.jpg", "url": "https://0xabhiram-blogs.vercel.app/post-burp.html", "mainEntityOfPage": "https://0xabhiram-blogs.vercel.app/post-burp.html"}</script>
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0c0507">
+  <script>(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var n=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0],t=n?n.type:"navigate",inside=false;try{inside=!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(e){}if(t==="reload"||(t==="navigate"&&!inside))document.documentElement.classList.add("intro","hero-wait")})()</script>
+  <noscript><style>.js-live{display:none!important}</style></noscript>
+  <link rel="stylesheet" href="styles.css">
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="splash" aria-hidden="true">
+    <div class="sp-glow"></div>
+    <div class="sp-content">
+      <svg class="sp-sign" viewBox="0 0 1000 220">
+        <defs>
+          <linearGradient id="sp-fill" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#ffd9dd"/>
+            <stop offset="0.5" stop-color="#ffffff"/>
+            <stop offset="1" stop-color="#ff9aa5"/>
+          </linearGradient>
+          <linearGradient id="sp-shine" gradientUnits="userSpaceOnUse" x1="-400" x2="-100" y1="0" y2="0">
+            <stop offset="0" stop-color="#ff5468" stop-opacity="0"/>
+            <stop offset="0.5" stop-color="#ff5468" stop-opacity="0.95"/>
+            <stop offset="1" stop-color="#ff5468" stop-opacity="0"/>
+            <animate attributeName="x1" from="-400" to="1000" dur="0.8s" begin="1.55s" fill="freeze"/>
+            <animate attributeName="x2" from="-100" to="1300" dur="0.8s" begin="1.55s" fill="freeze"/>
+          </linearGradient>
+        </defs>
+        <text class="sp-stroke" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
+        <text class="sp-shine" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
+      </svg>
+      <p class="sp-tag">Blog</p>
+    </div>
+    <div class="sp-foot">
+      <span>settling in for the night shift</span>
+      <div class="sp-bar"><i></i></div>
+    </div>
+  </div>
+  <div class="ambient" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <nav class="site-nav" aria-label="Primary">
+    <a class="brand" href="/" aria-label="0xAbhiram journal, home">
+      <span class="prompt-user">abhiram</span><span class="prompt-at">@</span><span class="prompt-host">journal</span><span class="prompt-sep">:</span><span class="prompt-path">~/blog/burp-proxy</span><span class="prompt-dollar">$</span><span class="cursor" aria-hidden="true">_</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/" aria-current="page"><span class="nav-num">01</span><span class="nav-label">Blog</span></a></li>
+      <li><a href="tags.html"><span class="nav-num">02</span><span class="nav-label">Tags</span></a></li>
+      <li><a href="contact.html"><span class="nav-num">03</span><span class="nav-label">Contact</span></a></li>
+    </ul>
+    <div class="nav-clock js-live" aria-hidden="true">
+      <span class="live-dot"></span><span class="clock-zone">IST</span><time data-clock></time>
+    </div>
+    <div class="nav-progress" aria-hidden="true"></div>
+  </nav>
+
+  <main id="main" class="container container--panel page-offset">
+    <article class="prose panel glass">
+      <figure class="post-hero-image">
+        <img src="assets/post-burp.jpg?v=2" alt="Diagram of a browser, Burp Proxy, and a server: decrypt in the middle, encrypt again toward the site" width="1000" height="562">
+      </figure>
+      <header class="post-header">
+        <p class="post-meta">
+          <time datetime="2026-10-16">October 16, 2026</time> · 7 min read
+        </p>
+        <h1>How Burp Proxy Encrypts and Decrypts HTTPS (the full traffic path)</h1>
+        <p class="lede">A plain-English walk through Burp Proxy: where it sits, why HTTPS needs two TLS sessions, how Burp's CA signs fake host certs, and the full request/response path from browser to server.</p>
+      </header>
+
+<p>I used Burp for a while before I actually understood <em>why</em> it can show me HTTPS as if it were plaintext. The UI makes it look like magic. It is not. It is two locks, a certificate Burp made on your laptop, and a proxy that sits in the middle on purpose.</p>
+<p>This post is that path, start to finish. No scanner talk. Just how the bytes move.</p>
+<h2>Where Burp sits</h2>
+<p>Burp Proxy is a local HTTP proxy. By default it listens on <code>127.0.0.1:8080</code>. Your browser is told: “do not go to the internet directly. Send everything to 8080.”</p>
+<p>Then the flow is always:</p>
+<p><strong>Browser → Burp → website → Burp → browser</strong></p>
+<p><img src="assets/burp/01-where.png" alt="Where Burp sits between the browser and the website"></p>
+<p>If you use <strong>Burp’s browser</strong> (Proxy → Intercept → Open Browser), this is already set. If you use Chrome or Firefox yourself, you point the proxy settings (or an extension like FoxyProxy) at 8080.</p>
+<p>Until the browser talks to 8080, Burp sees nothing. That is the first “is it even working?” check.</p>
+<h2>HTTP is easy. HTTPS is the whole story.</h2>
+<p>A request is just text. Something like:</p>
+<pre><code>GET /login HTTP/1.1
+Host: shop.test
+Cookie: session=abc
+</code></pre>
+<p>On <strong>HTTP</strong> (port 80) that text sits on the wire as-is. Burp reads it. You read it. Done.</p>
+<p>On <strong>HTTPS</strong> (port 443) TLS wraps that same text. Anyone in the middle should see only ciphertext. Your cookie should not leak. That is the point of HTTPS.</p>
+<p><img src="assets/burp/02-http-https.png" alt="Plain HTTP versus HTTPS"></p>
+<p>So if Burp is in the middle, how can it show <code>/login</code> and the cookie?</p>
+<p>It does not steal the website’s private key. It <strong>starts two HTTPS conversations instead of one</strong>.</p>
+<h2>The trick: two TLS sessions, not one</h2>
+<p>Call them Lock A and Lock B.</p>
+<ul>
+<li><strong>Lock A</strong> — browser talking to Burp. Burp pretends to be <code>shop.test</code>.</li>
+<li><strong>Lock B</strong> — Burp talking to the real <code>shop.test</code>. Burp pretends to be the browser.</li>
+</ul>
+<p>Inside Burp, after Lock A is opened and before Lock B is used, the HTTP is just text. That is the copy you see in <strong>Proxy → HTTP history</strong> and in <strong>Intercept</strong>.</p>
+<p><img src="assets/burp/04-two-tls.png" alt="Two TLS sessions with Burp in the middle"></p>
+<p>The browser never shares keys with the real server. The real server never shares keys with the browser. Burp holds both ends.</p>
+<p>That is a man-in-the-middle. In a pentest you do it to <em>your</em> browser, on <em>your</em> machine, against an app you are allowed to test. Do not point this at other people’s traffic.</p>
+<h2>First the CONNECT, then the lock</h2>
+<p>For HTTPS the browser does not start TLS blindly toward 8080. It first asks Burp to open a pipe to the host:</p>
+<pre><code>CONNECT shop.test:443 HTTP/1.1
+</code></pre>
+<p>Burp answers:</p>
+<pre><code>HTTP/1.1 200 Connection Established
+</code></pre>
+<p>Now the browser starts TLS down that pipe. From the browser’s point of view, “the server” is whoever is on the other end. That someone is Burp.</p>
+<p><img src="assets/burp/03-connect.png" alt="CONNECT then TLS"></p>
+<p>SNI (Server Name Indication) is in that handshake. It says <code>shop.test</code>. Burp uses that name to mint a certificate for <code>shop.test</code>, so the name in the cert matches the site you typed.</p>
+<p>Plain HTTP skips CONNECT. The browser sends <code>GET http://shop.test/…</code> straight to 8080 and Burp forwards it.</p>
+<h2>Why you install Burp’s CA</h2>
+<p>TLS is not only encryption. It is also “are you really shop.test?”</p>
+<p>In real life, <code>shop.test</code> shows a cert signed by a public Certificate Authority. Your browser already trusts those CAs. Padlock, happy.</p>
+<p>Burp cannot use shop.test’s real private key. It does not have it. So Burp does this instead:</p>
+<ol>
+<li>The first time you launch Burp, it creates <strong>its own Certificate Authority</strong> on your computer. Unique per install. Private key stays local.</li>
+<li>For each host you visit, Burp generates a <strong>look-alike cert</strong> for that hostname, signed by Burp’s CA.</li>
+<li>Default setting in Burp: <strong>Generate CA-signed per-host certificates</strong>. That is the one you want.</li>
+</ol>
+<p>If the browser does not trust Burp’s CA, you get “Your connection is not private” on every HTTPS site. That warning is correct. The cert is not from a public CA.</p>
+<p><img src="assets/burp/05-certs.png" alt="Why Burp’s CA has to be trusted"></p>
+<p>Two ways out:</p>
+<ul>
+<li>Use <strong>Burp’s browser</strong>. It already trusts that CA. Easiest.</li>
+<li>Or download the CA from <code>http://burpsuite</code> (or <code>http://127.0.0.1:8080</code>) and install it as a trusted root in Chrome / Firefox / the OS.</li>
+</ul>
+<p>PortSwigger’s own note is worth repeating: if someone else can steal that CA private key from your disk, they could MITM your HTTPS too. Do not copy <code>cacert.der</code> onto a shared machine. Do not email it.</p>
+<h2>The full path for one HTTPS page</h2>
+<p>Here is one page load, in order.</p>
+<p><img src="assets/burp/06-full-flow.png" alt="Full HTTPS path through Burp, ten steps"></p>
+<p>Slow version, same steps:</p>
+<ol>
+<li>Proxy is on. Browser uses <code>127.0.0.1:8080</code>.</li>
+<li><code>CONNECT shop.test:443</code> → <code>200 Connection Established</code>.</li>
+<li>Browser and Burp finish TLS (Lock A). Burp’s per-host cert is in play.</li>
+<li>Browser is happy because Burp’s CA is trusted.</li>
+<li>Burp opens Lock B to the real server and does a normal HTTPS handshake. It sees the <em>real</em> cert. You can look at that in the response / Server TLS panel if you need to.</li>
+<li><code>GET /</code> arrives inside Lock A. Burp decrypts. History gets a row.</li>
+<li>If <strong>Intercept is on</strong>, the request sits there until you <strong>Forward</strong> or <strong>Drop</strong>. You can change a header, a cookie, a JSON body. Burp can also fix <code>Content-Length</code> for you after an edit.</li>
+<li>Burp sends the (maybe edited) request through Lock B.</li>
+<li>The response comes back through Lock B. Decrypt, maybe intercept again, encrypt with Lock A.</li>
+<li>The tab renders. As far as Chrome is concerned it talked to shop.test. As far as shop.test is concerned it talked to a client. Both are talking to Burp.</li>
+</ol>
+<p>That is encrypt → decrypt → (you) → encrypt, both ways.</p>
+<h2>Intercept is a pause button</h2>
+<p>People mix this up.</p>
+<p><strong>Proxy running</strong> = traffic goes through Burp. History fills up.</p>
+<p><strong>Intercept on</strong> = matching messages wait for you.</p>
+<p><img src="assets/burp/07-intercept.png" alt="Intercept off versus on"></p>
+<p>If a page spins forever, look at the Intercept tab. Something is probably sitting there. Turn intercept off when you are just browsing. Turn it on when you want to tamper with one call.</p>
+<p>You can also add rules (only this host, only this method, skip images). Same idea: pause some messages, let the rest through.</p>
+<h2>When Burp does <em>not</em> decrypt</h2>
+<p>Sometimes you cannot, or should not, break TLS:</p>
+<ul>
+<li>The app <strong>pins</strong> the real certificate (a lot of mobile apps). The client will not accept Burp’s look-alike, even with the CA installed.</li>
+<li>You only care about one host and want the rest left alone.</li>
+<li>You want the server to see the <strong>browser’s real TLS fingerprint</strong> (some anti-bot checks look at that).</li>
+</ul>
+<p>Burp calls this <strong>TLS pass through</strong>. The CONNECT still happens. The TLS bytes are forwarded as-is. Burp does not get a plaintext HTTP copy. History will not show the insides.</p>
+<p><img src="assets/burp/08-passthrough.png" alt="TLS pass through"></p>
+<p>There is also <strong>invisible proxying</strong>, for clients that do not speak the proxy protocol and never send CONNECT (some thick clients, some mobile setups). Then Burp cannot learn the hostname from CONNECT, so you often pin one hostname on the listener’s certificate settings.</p>
+<h2>Tiny lab you can do in two minutes</h2>
+<ol>
+<li>Open Burp. Proxy listener on 8080. Intercept <strong>off</strong>.</li>
+<li>Open Burp’s browser.</li>
+<li>Visit <code>https://portswigger.net</code>.</li>
+<li>In <strong>Proxy → HTTP history</strong>, click the row. You should see a normal <code>GET</code> and HTML — that is Lock A decrypted.</li>
+<li>Turn Intercept <strong>on</strong>. Reload. The request freezes. Change nothing. Hit Forward. The page finishes.</li>
+<li>Optional: in intercept, change <code>GET /</code> to <code>GET /does-not-exist</code>. Forward. You just proved the server sees Burp’s version of the request, not the browser’s original.</li>
+</ol>
+<p>If history is empty, the browser is not using 8080. Fix the proxy, not TLS.</p>
+<p>If you get a certificate warning in an external browser, the CA is not trusted yet. Fix that, or stay on Burp’s browser.</p>
+<h2>What this is not</h2>
+<p>Burp is not “breaking AES”. It is not recovering the website’s private key. It is not a VPN.</p>
+<p>It is a proxy you trust, with a CA you trust, that runs two TLS sessions and lets you read the HTTP in the middle.</p>
+<p>Once that picture is clear, Repeater, Intruder, and Logger make more sense. They all eat the same plaintext Burp already peeled out of Lock A.</p>
+<p>Official bits I used while writing this: <a href="https://portswigger.net/burp/documentation/desktop/tools/proxy">Burp Proxy</a>, <a href="https://portswigger.net/burp/documentation/desktop/external-browser-config/certificate">installing Burp’s CA</a>, and the <a href="https://portswigger.net/burp/documentation/desktop/settings/tools/proxy">proxy / certificate / TLS pass through settings</a>.</p>
+
+      <hr>
+      <footer class="post-end">
+        <ul class="tags" aria-label="Tags"><li><a href="tags.html#burp-suite">Burp Suite</a></li><li><a href="tags.html#proxy">Proxy</a></li><li><a href="tags.html#tls">TLS</a></li><li><a href="tags.html#https">HTTPS</a></li><li><a href="tags.html#product-security">Product Security</a></li><li><a href="tags.html#web-security">Web Security</a></li></ul>
+        <a href="/">← Back to all posts</a>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <section class="footer-cta">
+        <h2>Got a story about <em>trust</em> gone wrong?</h2>
+        <a class="cta-btn" href="contact.html">Open a channel <span aria-hidden="true">→</span></a>
+      </section>
+
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="footer-logo" href="/"><span>&gt;_</span> 0xAbhiram</a>
+          <p>Notes from a Product Security Engineer — red teaming, identity and GRC.</p>
+        </div>
+        <nav class="footer-col" aria-label="Footer">
+          <h2>Navigate</h2>
+          <ul>
+            <li><a href="/">Blog</a></li>
+            <li><a href="tags.html">Tags</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="footer-col">
+          <h2>Connect</h2>
+          <ul>
+            <li><a href="https://github.com/0xabhiram" rel="me">GitHub ↗</a></li>
+            <li><a href="https://x.com/0xabhiram" rel="me">X ↗</a></li>
+            <li><a href="mailto:abhiram6542@gmail.com">Email</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <dl class="footer-stats js-live" aria-hidden="true">
+        <div class="stat"><dt class="stat-label">Uptime</dt><dd class="stat-value" data-uptime="2024-12-24T15:30:00+05:30"></dd></div>
+        <div class="stat"><dt class="stat-label">Your session</dt><dd class="stat-value" data-session></dd></div>
+        <div class="stat"><dt class="stat-label">Local time · IST</dt><dd class="stat-value" data-clock></dd></div>
+        <div class="stat"><dt class="stat-label">Moon tonight</dt><dd class="stat-value"><span class="moon-ico" data-moon-ico></span><span data-moon></span></dd></div>
+      </dl>
+
+      <div class="footer-bottom">
+        <span>© 2026 Abhiram SS</span>
+        <button class="to-top" type="button">cd ~ ↑</button>
+      </div>
+    </div>
+  </footer>
+  <canvas class="embers" aria-hidden="true"></canvas>
+</body>
+</html>
