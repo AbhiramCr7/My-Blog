@@ -277,7 +277,7 @@ index_body=f'''  <header class="hero">
 {cards}
     </section>
   </main>'''
-home_desc = "0xAbhiram Blog — Product Security Engineer Abhiram SS. How Burp Suite intercepts HTTPS: CONNECT, Burp CA, on-the-fly certificates, and two TLS sessions."
+home_desc = "0xAbhiram Blog - Product Security Engineer Abhiram SS. How Burp Suite intercepts HTTPS: CONNECT, Burp CA, on-the-fly certificates, and two TLS sessions."
 home_ld = {
     "@context": "https://schema.org",
     "@graph": [
@@ -289,13 +289,14 @@ home_ld = {
                        **({"url": abs_url(p["page"])} if SITE_URL else {})} for p in POSTS]},
     ],
 }
-open("index.html","w").write(page("0xAbhiram Blog — Product Security Engineer Abhiram SS", home_desc,
+open("index.html","w").write(page("0xAbhiram Blog - Product Security Engineer Abhiram SS", home_desc,
     "~/blog", "blog", index_body, True, True, url="", jsonld=home_ld))
 
 for p in POSTS:
     tag_links = "".join(f'<li><a href="tags.html#{slug(t)}">{t}</a></li>' for t in p["tags"])
     body = f'''  <main id="main" class="container container--panel page-offset">
     <article class="prose panel glass">
+      <!-- rev 2026-10-17-dual-tls -->
       <figure class="post-hero-image">
         <img src="assets/{p['img']}?v=4" alt="{esc(p['alt'])}" width="1000" height="562">
       </figure>
@@ -381,7 +382,7 @@ tags_body=f'''  <main id="main" class="page-offset">
       <p class="no-results" hidden>grep: no matches found. <button class="link-btn" id="reset-filter" type="button">reset filter</button></p>
     </div>
   </main>'''
-open("tags.html","w").write(page(f"Tags | {SITE_NAME}", "Browse 0xAbhiram's writing by topic — Burp Suite, HTTPS, and how security tools work behind the scenes.",
+open("tags.html","w").write(page(f"Tags | {SITE_NAME}", "Browse 0xAbhiram's writing by topic - Burp Suite, HTTPS, and how security tools work behind the scenes.",
     "~/tags", "tags", tags_body, url="tags.html"))
 
 contact_body='''  <main id="main" class="page-offset">
@@ -389,7 +390,7 @@ contact_body='''  <main id="main" class="page-offset">
       <header class="page-head">
         <p class="page-cmd">./contact --open</p>
         <h1 class="page-title">Open a channel</h1>
-        <p class="page-sub">Research collab, a bug you found, or a question about a post — the line is open.</p>
+        <p class="page-sub">Research collab, a bug you found, or a question about a post - the line is open.</p>
       </header>
 
       <div class="contact-grid">
@@ -400,7 +401,7 @@ contact_body='''  <main id="main" class="page-offset">
           </div>
           <div class="term-body">
             <p class="cmd"><span class="ps">$</span><span class="c">whoami</span></p>
-            <p class="out">Abhiram SS — Product Security Engineer</p>
+            <p class="out">Abhiram SS - Product Security Engineer</p>
             <p class="cmd"><span class="ps">$</span><span class="c">cat channels.txt</span></p>
             <ul class="channels">
               <li>
@@ -433,13 +434,13 @@ contact_body='''  <main id="main" class="page-offset">
           <label class="field"><span>Subject</span><input name="subject" maxlength="120" placeholder="What's this about?"></label>
           <label class="field"><span>Payload</span><textarea name="message" required minlength="10" maxlength="4000" placeholder="Your message…"></textarea></label>
           <button class="send" type="submit">Send transmission <span aria-hidden="true">→</span></button>
-          <p class="fine" role="status" aria-live="polite">// no trackers — straight to my inbox.</p>
+          <p class="fine" role="status" aria-live="polite">// no trackers - straight to my inbox.</p>
         </form>
       </div>
     </div>
   </main>'''
 contact_body = contact_body.replace('data-to="CONTACT_EMAIL"', f'data-to="{CONTACT_EMAIL}"').replace('data-key="FORM_KEY"', f'data-key="{FORM_KEY}"')
-open("contact.html","w").write(page(f"Contact | {SITE_NAME}", "Get in touch with Abhiram SS (0xAbhiram), Product Security Engineer — research collaboration, responsible disclosure, or a question about a post.",
+open("contact.html","w").write(page(f"Contact | {SITE_NAME}", "Get in touch with Abhiram SS (0xAbhiram), Product Security Engineer - research collaboration, responsible disclosure, or a question about a post.",
     "~/contact", "contact", contact_body, url="contact.html"))
 
 robots = "User-agent: *\nAllow: /\n"
@@ -495,6 +496,7 @@ csp = "; ".join([
     "upgrade-insecure-requests",
 ])
 headers = [
+    {"key": "Cache-Control", "value": "no-cache, no-store, must-revalidate"},
     {"key": "Content-Security-Policy", "value": csp},
     {"key": "X-Content-Type-Options", "value": "nosniff"},
     {"key": "X-Frame-Options", "value": "DENY"},
@@ -505,7 +507,7 @@ headers = [
 ]
 vercel = {
     "framework": None,
-    "installCommand": "echo \"static site — nothing to install\"",
+    "installCommand": "echo \"static site - nothing to install\"",
     "buildCommand": "echo \"public/ is prebuilt with npm run build\"",
     "outputDirectory": "public",
     "cleanUrls": False,
