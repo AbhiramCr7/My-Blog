@@ -132,7 +132,6 @@ def head(title, desc, preload=False, url="", image="assets/banner-desk.jpg", kin
 </head>'''
 
 SPLASH='''  <div class="splash" aria-hidden="true">
-    <div class="sp-blocks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="sp-glow"></div>
     <div class="sp-content">
       <svg class="sp-sign" viewBox="0 0 1000 220">
@@ -153,7 +152,7 @@ SPLASH='''  <div class="splash" aria-hidden="true">
         <text class="sp-stroke" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
         <text class="sp-shine" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
       </svg>
-      <p class="sp-tag">Product Security Engineer</p>
+      <p class="sp-tag">Blog</p>
     </div>
     <div class="sp-foot">
       <span>settling in for the night shift</span>
