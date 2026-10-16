@@ -14,18 +14,21 @@
   <meta property="og:description" content="Browse 0xAbhiram's security writing by topic: red team, Active Directory, Kerberos, trust boundaries, GRC and more.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@0xabhiram">
+  <link rel="alternate" type="application/rss+xml" title="0xAbhiram Blog" href="/rss.xml">
   <link rel="canonical" href="https://0xabhiram-blogs.vercel.app/tags.html">
   <meta property="og:url" content="https://0xabhiram-blogs.vercel.app/tags.html">
   <meta property="og:image" content="https://0xabhiram-blogs.vercel.app/assets/banner-desk.jpg">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0c0507">
   <script>(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var n=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0],t=n?n.type:"navigate",inside=false;try{inside=!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(e){}if(t==="reload"||(t==="navigate"&&!inside))document.documentElement.classList.add("intro","hero-wait")})()</script>
+  <noscript><style>.js-live{display:none!important}</style></noscript>
   <link rel="stylesheet" href="styles.css">
   <script src="main.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="splash" aria-hidden="true">
+    <div class="sp-blocks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="sp-glow"></div>
     <div class="sp-content">
       <svg class="sp-sign" viewBox="0 0 1000 220">
@@ -46,7 +49,7 @@
         <text class="sp-stroke" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
         <text class="sp-shine" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
       </svg>
-      <p class="sp-tag">Security Engineer Journal</p>
+      <p class="sp-tag">Product Security Engineer</p>
     </div>
     <div class="sp-foot">
       <span>settling in for the night shift</span>
@@ -56,16 +59,16 @@
   <div class="ambient" aria-hidden="true"><span></span><span></span><span></span></div>
 
   <nav class="site-nav" aria-label="Primary">
-    <a class="brand" href="index.html" aria-label="0xAbhiram journal, home">
+    <a class="brand" href="/" aria-label="0xAbhiram journal, home">
       <span class="prompt-user">abhiram</span><span class="prompt-at">@</span><span class="prompt-host">journal</span><span class="prompt-sep">:</span><span class="prompt-path">~/tags</span><span class="prompt-dollar">$</span><span class="cursor" aria-hidden="true">_</span>
     </a>
     <ul class="nav-links">
-      <li><a href="index.html"><span class="nav-num">01</span><span class="nav-label">Blog</span></a></li>
+      <li><a href="/"><span class="nav-num">01</span><span class="nav-label">Blog</span></a></li>
       <li><a href="tags.html" aria-current="page"><span class="nav-num">02</span><span class="nav-label">Tags</span></a></li>
       <li><a href="contact.html"><span class="nav-num">03</span><span class="nav-label">Contact</span></a></li>
     </ul>
-    <div class="nav-clock" aria-label="Local time in India">
-      <span class="live-dot" aria-hidden="true"></span><span class="clock-zone">IST</span><time data-clock>--:--:--</time>
+    <div class="nav-clock js-live" aria-hidden="true">
+      <span class="live-dot"></span><span class="clock-zone">IST</span><time data-clock></time>
     </div>
     <div class="nav-progress" aria-hidden="true"></div>
   </nav>
@@ -75,7 +78,7 @@
       <header class="page-head">
         <p class="page-cmd">ls ~/tags --sort=count</p>
         <h1 class="page-title">Tags</h1>
-        <p class="page-sub">18 tags across 3 logs. Pick a tag or grep for a topic to filter the archive.</p>
+        <p class="page-sub">18 tags across 4 logs. Pick a tag or grep for a topic to filter the archive.</p>
       </header>
 
       <section class="tag-console" aria-label="Filter posts">
@@ -84,21 +87,21 @@
           <input id="tag-search" type="search" placeholder="kerberos, red team, trust…" autocomplete="off" aria-label="Search tags and posts">
         </label>
         <div class="tag-cloud" role="group" aria-label="Tags">
-          <button class="tag-chip" type="button" data-tag="all" aria-pressed="true">all <span class="tag-count">3</span></button>
-          <button class="tag-chip" type="button" data-tag="red-team" aria-pressed="false" style="--w:2">Red Team <span class="tag-count">2</span></button>
-          <button class="tag-chip" type="button" data-tag="trust-boundaries" aria-pressed="false" style="--w:2">Trust Boundaries <span class="tag-count">2</span></button>
-          <button class="tag-chip" type="button" data-tag="active-directory" aria-pressed="false" style="--w:1">Active Directory <span class="tag-count">1</span></button>
-          <button class="tag-chip" type="button" data-tag="ad-security" aria-pressed="false" style="--w:1">AD Security <span class="tag-count">1</span></button>
+          <button class="tag-chip" type="button" data-tag="all" aria-pressed="true">all <span class="tag-count">4</span></button>
+          <button class="tag-chip" type="button" data-tag="red-team" aria-pressed="false" style="--w:2">Red Team <span class="tag-count">3</span></button>
+          <button class="tag-chip" type="button" data-tag="trust-boundaries" aria-pressed="false" style="--w:2">Trust Boundaries <span class="tag-count">3</span></button>
+          <button class="tag-chip" type="button" data-tag="active-directory" aria-pressed="false" style="--w:2">Active Directory <span class="tag-count">2</span></button>
+          <button class="tag-chip" type="button" data-tag="ad-security" aria-pressed="false" style="--w:2">AD Security <span class="tag-count">2</span></button>
+          <button class="tag-chip" type="button" data-tag="enterprise-security" aria-pressed="false" style="--w:2">Enterprise Security <span class="tag-count">2</span></button>
+          <button class="tag-chip" type="button" data-tag="identity-security" aria-pressed="false" style="--w:2">Identity Security <span class="tag-count">2</span></button>
+          <button class="tag-chip" type="button" data-tag="kerberos" aria-pressed="false" style="--w:2">Kerberos <span class="tag-count">2</span></button>
           <button class="tag-chip" type="button" data-tag="adversarial-thinking" aria-pressed="false" style="--w:1">Adversarial Thinking <span class="tag-count">1</span></button>
           <button class="tag-chip" type="button" data-tag="ai" aria-pressed="false" style="--w:1">AI <span class="tag-count">1</span></button>
           <button class="tag-chip" type="button" data-tag="appsec" aria-pressed="false" style="--w:1">AppSec <span class="tag-count">1</span></button>
           <button class="tag-chip" type="button" data-tag="breach-analysis" aria-pressed="false" style="--w:1">Breach Analysis <span class="tag-count">1</span></button>
           <button class="tag-chip" type="button" data-tag="claude" aria-pressed="false" style="--w:1">Claude <span class="tag-count">1</span></button>
           <button class="tag-chip" type="button" data-tag="cowork" aria-pressed="false" style="--w:1">Cowork <span class="tag-count">1</span></button>
-          <button class="tag-chip" type="button" data-tag="enterprise-security" aria-pressed="false" style="--w:1">Enterprise Security <span class="tag-count">1</span></button>
           <button class="tag-chip" type="button" data-tag="grc" aria-pressed="false" style="--w:1">GRC <span class="tag-count">1</span></button>
-          <button class="tag-chip" type="button" data-tag="identity-security" aria-pressed="false" style="--w:1">Identity Security <span class="tag-count">1</span></button>
-          <button class="tag-chip" type="button" data-tag="kerberos" aria-pressed="false" style="--w:1">Kerberos <span class="tag-count">1</span></button>
           <button class="tag-chip" type="button" data-tag="ldap" aria-pressed="false" style="--w:1">LDAP <span class="tag-count">1</span></button>
           <button class="tag-chip" type="button" data-tag="product-security" aria-pressed="false" style="--w:1">Product Security <span class="tag-count">1</span></button>
           <button class="tag-chip" type="button" data-tag="security-automation" aria-pressed="false" style="--w:1">Security Automation <span class="tag-count">1</span></button>
@@ -106,9 +109,20 @@
         </div>
       </section>
 
-      <p class="result-line" aria-live="polite">&gt; <b id="result-count">3</b> match(es) for <b id="result-label">all tags</b></p>
+      <p class="result-line" aria-live="polite">&gt; <b id="result-count">4</b> match(es) for <b id="result-label">all tags</b></p>
 
       <ul class="tag-results">
+        <li class="tag-row" data-tags="kerberos active-directory red-team identity-security ad-security enterprise-security trust-boundaries">
+          <a href="post-kerberos.html">
+            <img src="assets/post-kerberos.jpg?v=2" alt="" width="1000" height="562" loading="lazy">
+            <div>
+              <p class="post-log"><time datetime="2026-10-16">2026-10-16</time></p>
+              <h2>Kerberos Attacks: How Identity Tickets Become Paths Through AD</h2>
+              <ul class="row-tags"><li data-tag="kerberos">Kerberos</li><li data-tag="active-directory">Active Directory</li><li data-tag="red-team">Red Team</li><li data-tag="identity-security">Identity Security</li><li data-tag="ad-security">AD Security</li><li data-tag="enterprise-security">Enterprise Security</li><li data-tag="trust-boundaries">Trust Boundaries</li></ul>
+            </div>
+            <span class="row-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
         <li class="tag-row" data-tags="grc tprm claude ai security-automation cowork appsec">
           <a href="post-grc.html">
             <img src="assets/post-grc.jpg?v=2" alt="" width="1000" height="562" loading="lazy">
@@ -156,13 +170,13 @@
 
       <div class="footer-grid">
         <div class="footer-brand">
-          <a class="footer-logo" href="index.html"><span>&gt;_</span> 0xAbhiram</a>
-          <p>Notes on red teaming and product security.</p>
+          <a class="footer-logo" href="/"><span>&gt;_</span> 0xAbhiram</a>
+          <p>Notes from a Product Security Engineer — red teaming, identity and GRC.</p>
         </div>
         <nav class="footer-col" aria-label="Footer">
           <h2>Navigate</h2>
           <ul>
-            <li><a href="index.html">Blog</a></li>
+            <li><a href="/">Blog</a></li>
             <li><a href="tags.html">Tags</a></li>
             <li><a href="contact.html">Contact</a></li>
           </ul>
@@ -177,11 +191,11 @@
         </div>
       </div>
 
-      <dl class="footer-stats">
-        <div class="stat"><dt class="stat-label">Uptime</dt><dd class="stat-value" data-uptime="2024-12-24T15:30:00+05:30">—</dd></div>
-        <div class="stat"><dt class="stat-label">Your session</dt><dd class="stat-value" data-session>00:00:00</dd></div>
-        <div class="stat"><dt class="stat-label">Local time · IST</dt><dd class="stat-value" data-clock>--:--:--</dd></div>
-        <div class="stat"><dt class="stat-label">Moon tonight</dt><dd class="stat-value"><span class="moon-ico" data-moon-ico aria-hidden="true"></span><span data-moon>—</span></dd></div>
+      <dl class="footer-stats js-live" aria-hidden="true">
+        <div class="stat"><dt class="stat-label">Uptime</dt><dd class="stat-value" data-uptime="2024-12-24T15:30:00+05:30"></dd></div>
+        <div class="stat"><dt class="stat-label">Your session</dt><dd class="stat-value" data-session></dd></div>
+        <div class="stat"><dt class="stat-label">Local time · IST</dt><dd class="stat-value" data-clock></dd></div>
+        <div class="stat"><dt class="stat-label">Moon tonight</dt><dd class="stat-value"><span class="moon-ico" data-moon-ico></span><span data-moon></span></dd></div>
       </dl>
 
       <div class="footer-bottom">

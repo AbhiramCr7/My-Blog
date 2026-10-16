@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kerberos Attacks: How Identity Tickets Become Paths Through Active Directory | 0xAbhiram Blog</title>
+  <meta name="description" content="A red-team mental model of Kerberos: how TGTs and service tickets work, why Kerberoasting and AS-REP roasting exist by design, and the controls that actually reduce the blast radius.">
+  <meta name="author" content="Abhiram SS (0xAbhiram)">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta property="og:site_name" content="0xAbhiram Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Kerberos Attacks: How Identity Tickets Become Paths Through Active Directory | 0xAbhiram Blog">
+  <meta property="og:description" content="A red-team mental model of Kerberos: how TGTs and service tickets work, why Kerberoasting and AS-REP roasting exist by design, and the controls that actually reduce the blast radius.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@0xabhiram">
+  <link rel="alternate" type="application/rss+xml" title="0xAbhiram Blog" href="/rss.xml">
+  <link rel="canonical" href="https://0xabhiram-blogs.vercel.app/post-kerberos.html">
+  <meta property="og:url" content="https://0xabhiram-blogs.vercel.app/post-kerberos.html">
+  <meta property="og:image" content="https://0xabhiram-blogs.vercel.app/assets/post-kerberos.jpg">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Kerberos Attacks: How Identity Tickets Become Paths Through Active Directory", "description": "A red-team mental model of Kerberos: how TGTs and service tickets work, why Kerberoasting and AS-REP roasting exist by design, and the controls that actually reduce the blast radius.", "datePublished": "2026-10-16", "dateModified": "2026-10-16", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}, "publisher": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}, "keywords": "Kerberos, Active Directory, Red Team, Identity Security, AD Security, Enterprise Security, Trust Boundaries", "image": "https://0xabhiram-blogs.vercel.app/assets/post-kerberos.jpg", "url": "https://0xabhiram-blogs.vercel.app/post-kerberos.html", "mainEntityOfPage": "https://0xabhiram-blogs.vercel.app/post-kerberos.html"}</script>
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0c0507">
+  <script>(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var n=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0],t=n?n.type:"navigate",inside=false;try{inside=!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(e){}if(t==="reload"||(t==="navigate"&&!inside))document.documentElement.classList.add("intro","hero-wait")})()</script>
+  <noscript><style>.js-live{display:none!important}</style></noscript>
+  <link rel="stylesheet" href="styles.css">
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="splash" aria-hidden="true">
+    <div class="sp-blocks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="sp-glow"></div>
+    <div class="sp-content">
+      <svg class="sp-sign" viewBox="0 0 1000 220">
+        <defs>
+          <linearGradient id="sp-fill" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#ffd9dd"/>
+            <stop offset="0.5" stop-color="#ffffff"/>
+            <stop offset="1" stop-color="#ff9aa5"/>
+          </linearGradient>
+          <linearGradient id="sp-shine" gradientUnits="userSpaceOnUse" x1="-400" x2="-100" y1="0" y2="0">
+            <stop offset="0" stop-color="#ff5468" stop-opacity="0"/>
+            <stop offset="0.5" stop-color="#ff5468" stop-opacity="0.95"/>
+            <stop offset="1" stop-color="#ff5468" stop-opacity="0"/>
+            <animate attributeName="x1" from="-400" to="1000" dur="0.8s" begin="1.55s" fill="freeze"/>
+            <animate attributeName="x2" from="-100" to="1300" dur="0.8s" begin="1.55s" fill="freeze"/>
+          </linearGradient>
+        </defs>
+        <text class="sp-stroke" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
+        <text class="sp-shine" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
+      </svg>
+      <p class="sp-tag">Product Security Engineer</p>
+    </div>
+    <div class="sp-foot">
+      <span>settling in for the night shift</span>
+      <div class="sp-bar"><i></i></div>
+    </div>
+  </div>
+  <div class="ambient" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <nav class="site-nav" aria-label="Primary">
+    <a class="brand" href="/" aria-label="0xAbhiram journal, home">
+      <span class="prompt-user">abhiram</span><span class="prompt-at">@</span><span class="prompt-host">journal</span><span class="prompt-sep">:</span><span class="prompt-path">~/blog/kerberos-attacks</span><span class="prompt-dollar">$</span><span class="cursor" aria-hidden="true">_</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/" aria-current="page"><span class="nav-num">01</span><span class="nav-label">Blog</span></a></li>
+      <li><a href="tags.html"><span class="nav-num">02</span><span class="nav-label">Tags</span></a></li>
+      <li><a href="contact.html"><span class="nav-num">03</span><span class="nav-label">Contact</span></a></li>
+    </ul>
+    <div class="nav-clock js-live" aria-hidden="true">
+      <span class="live-dot"></span><span class="clock-zone">IST</span><time data-clock></time>
+    </div>
+    <div class="nav-progress" aria-hidden="true"></div>
+  </nav>
+
+  <main id="main" class="container container--panel page-offset">
+    <article class="prose panel glass">
+      <figure class="post-hero-image">
+        <img src="assets/post-kerberos.jpg?v=2" alt="A golden Kerberos ticket floating in front of a dark domain controller, with smaller silver tickets orbiting it" width="1000" height="562">
+      </figure>
+      <header class="post-header">
+        <p class="post-meta">
+          <time datetime="2026-10-16">October 16, 2026</time> · 8 min read
+        </p>
+        <h1>Kerberos Attacks: How Identity Tickets Become Paths Through Active Directory</h1>
+        <p class="lede">A red-team mental model of Kerberos: how TGTs and service tickets work, why Kerberoasting and AS-REP roasting exist by design, and the controls that actually reduce the blast radius.</p>
+      </header>
+
+<h2>Why this article exists</h2>
+<p>The previous log walked through Active Directory as an identity system: forests, domains, OUs, domain controllers, and trust as a graph. It ended by pointing here, because <strong>Kerberos is the protocol that makes that graph move</strong>.</p>
+<p>If AD is the map of who is trusted, Kerberos is the paperwork that proves it. Most “AD attacks” that look like magic tricks are just people collecting, requesting, or forging that paperwork.</p>
+<p>This is not a command list. It is the same kind of mental model as the last post: how the protocol is supposed to work, where the design leaves room for abuse, and what a Product Security Engineer should actually change.</p>
+<hr>
+<h2>Kerberos in one picture</h2>
+<p>Kerberos is a ticket system. A client never sends a password to every server it talks to. It proves itself once to a trusted third party — the <strong>Key Distribution Center (KDC)</strong>, which in a domain lives on the Domain Controller — and then carries tickets.</p>
+<p>Three exchanges matter:</p>
+<ol>
+<li><strong>AS (Authentication Service)</strong> — “I am who I say I am.” The client walks away with a <strong>Ticket-Granting Ticket (TGT)</strong>.</li>
+<li><strong>TGS (Ticket-Granting Service)</strong> — “I need to talk to this service.” The client walks away with a <strong>service ticket</strong>.</li>
+<li><strong>AP (Application)</strong> — the client shows that service ticket to the actual server (file share, SQL, HTTP, whatever).</li>
+</ol>
+<p>The KDC is trusted because it knows the long-term keys of users and services. Tickets are blobs encrypted with those keys. If you understand <em>who can decrypt what</em>, the attacks stop being mysterious.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Blob</th>
+<th>Encrypted with</th>
+<th>Who can read it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TGT</td>
+<td>KRBTGT account key</td>
+<td>Only the KDC</td>
+</tr>
+<tr>
+<td>Service ticket</td>
+<td>Target service account key</td>
+<td>That service, and anyone who has the service’s long-term key</td>
+</tr>
+<tr>
+<td>Session keys inside</td>
+<td>Derived from the user’s key or prior session</td>
+<td>The two parties in that hop</td>
+</tr>
+</tbody></table></div>
+<p>That middle row is the whole of Kerberoasting. The last row, plus KRBTGT, is the whole of golden tickets. Nothing here is a memory-corruption bug. It is the protocol doing what it was designed to do, in an environment it was not designed to survive: a domain full of guessable service passwords and over-trusted accounts.</p>
+<hr>
+<h2>The TGT is a session, not a password</h2>
+<p>When a user logs on, the AS exchange proves they know their password <strong>to the KDC</strong>, not to every resource. The KDC returns a TGT, valid for hours by default.</p>
+<p>From that moment, the user’s password is not on the wire for ordinary resource access. The TGT is. Steal a live TGT (or the session it represents) and you inherit the user’s access until it expires — without ever learning the password.</p>
+<p>That is why credential theft in AD so often targets:</p>
+<ul>
+<li>the <strong>ticket cache</strong> on a workstation (what the user is currently allowed to be);</li>
+<li>the <strong>KRBTGT key</strong> on the KDC (what every TGT is sealed with);</li>
+<li><strong>service account keys</strong> (what service tickets are sealed with).</li>
+</ul>
+<p>Pass-the-ticket is not a clever exploit. It is using a valid ticket from the wrong chair.</p>
+<hr>
+<h2>Kerberoasting: asking the KDC for ciphertext you can take home</h2>
+<p>Service Principal Names (SPNs) advertise “this account runs this service.” Any authenticated domain user can ask the TGS for a ticket to an SPN.</p>
+<p>The TGS does not ask the service first. It encrypts a ticket with <strong>that service account’s long-term key</strong> and hands it to the requester. The requester cannot read the ticket. They can <strong>take it offline</strong> and try to recover the key — which, for a user-style service account, <em>is</em> the password.</p>
+<p>That is Kerberoasting:</p>
+<ul>
+<li>The request looks like normal Kerberos traffic.</li>
+<li>The crack happens off the network, so lockouts and live detections on the DC do not fire the way they would for a password-guess against LDAP.</li>
+<li>Success depends on the service password being weak, reused, or never rotated — which is still common because “the app will break if we change it.”</li>
+</ul>
+<p>Kerberoasting exists because Kerberos assumes the service’s long-term key is a <strong>high-entropy secret</strong>, not <code>Spring2020!</code> on an account that also happens to be in Domain Admins.</p>
+<h3>What actually reduces it</h3>
+<ul>
+<li><strong>Group Managed Service Accounts (gMSA)</strong> or equivalent: the platform generates and rotates a 120+ character secret. There is no human-chosen password to roast.</li>
+<li>If a user account must have an SPN, treat its password like a cryptographic key: long, random, rotated, stored in a vault, never in a wiki.</li>
+<li><strong>AES</strong> instead of RC4 for ticket encryption, so the offline work is against a stronger wrapping.</li>
+<li><strong>Least privilege on the account.</strong> Roasting a service account that can only run one IIS pool is an incident. Roasting one in Domain Admins is a domain takeover.</li>
+<li>Hunt for <strong>unusual TGS requests</strong> (one user asking for many SPNs, especially from a workstation that does not use those services). The request is the tell; the crack is invisible.</li>
+</ul>
+<hr>
+<h2>AS-REP roasting: tickets with no pre-authentication</h2>
+<p>Normally the AS exchange requires <strong>pre-authentication</strong>: the client proves it already knows the password before the KDC returns useful ciphertext.</p>
+<p>Some accounts have “Do not require Kerberos preauthentication” set. For those, an attacker who only knows the <strong>account name</strong> can request an AS-REP and take that ciphertext offline, same idea as roasting a service ticket.</p>
+<p>This is rarer than Kerberoasting and easier to eliminate: it is a flag on the account, not a protocol requirement. Inventory it. Turn it off unless a specific ancient client still needs it. If something still needs it, that thing is the risk, not the flag.</p>
+<hr>
+<h2>Delegation: tickets that act for someone else</h2>
+<p>Kerberos delegation exists so a frontend can call a backend <strong>as the user</strong>. That is a real product requirement (the web server should not connect to the database as itself for every user). It is also how a single compromised service becomes every user who visited it.</p>
+<p>Three shapes, getting more dangerous as they get more convenient:</p>
+<ul>
+<li><strong>Unconstrained delegation</strong> — the service receives a copy of the user’s TGT. Anyone who controls that service can impersonate the user <em>anywhere in the domain</em>. This should not exist on modern estates.</li>
+<li><strong>Constrained delegation</strong> — the service may impersonate the user only toward named backends. Better, still a path in the identity graph.</li>
+<li><strong>Resource-based constrained delegation (RBCD)</strong> — the <em>target</em> decides who may delegate to it. Convenient for cloud-era joins; abusable if the attacker can write that attribute on a computer or service object.</li>
+</ul>
+<p>The AD fundamentals post treated permissions as graph edges. Delegation is an edge that says “this node may become those users.” BloodHound-style tools light up because this edge is easy to miss in a GUI and devastating in a path.</p>
+<hr>
+<h2>Golden and silver tickets: forging the paperwork</h2>
+<p>If you have the <strong>KRBTGT</strong> key, you can mint TGTs that the KDC will treat as its own. That is a <strong>golden ticket</strong>: a session that never had to log on, for any user, often with a lifetime you choose.</p>
+<p>If you have a <strong>service account</strong> key, you can mint service tickets for <em>that</em> service. That is a <strong>silver ticket</strong>: the KDC may never see the request. The service itself is convinced.</p>
+<p>These are not “first access” attacks. They are <strong>persistence and impersonation after</strong> someone already reached the key. The product-security question is not “how do I forge a ticket in a lab.” It is:</p>
+<ul>
+<li>How hard is KRBTGT to steal (DC security, backup hygiene, who can DCSync)?</li>
+<li>How often is KRBTGT rotated (twice, in sequence, or the old key still validates)?</li>
+<li>Do services <strong>validate PAC and ticket fields</strong> strictly, or accept whatever decrypts?</li>
+<li>Would anyone notice a TGT that never came from an AS-REQ?</li>
+</ul>
+<p>Rotation without a second rotation leaves the old KRBTGT valid. A golden ticket minted yesterday still works until both keys have been replaced and the old one dropped. That operational detail is where most “we rotated KRBTGT” stories fail.</p>
+<hr>
+<h2>How this sits on the identity graph</h2>
+<p>Put the last article and this one on the same whiteboard:</p>
+<ol>
+<li>Compromise a low-privilege user (phish, token, local admin on a workstation).</li>
+<li>Read the graph: groups, ACLs, SPNs, delegation, trusts.</li>
+<li>Request service tickets for roastable SPNs, or find an account that skips pre-auth.</li>
+<li>Recover a service password that is also over-privileged.</li>
+<li>Walk edges (ACL, GPO, delegation, trust) until a path reaches a DC or KRBTGT.</li>
+<li>Persist with tickets that no longer depend on the original user.</li>
+</ol>
+<p>None of those steps require a CVE. They require <strong>identity objects behaving as designed</strong> plus passwords and ACLs that nobody treated as part of the product.</p>
+<p>That is why this belongs next to product security, not only “red team lore.” If your product joins a domain, runs under a service account, exposes an SPN, or accepts Kerberos on a backend, <strong>you shipped a Kerberos principal</strong>. Its password policy, group membership, and delegation flags are product decisions.</p>
+<hr>
+<h2>What a Product Security Engineer should ask</h2>
+<p>When a service is going into a domain — yours or a customer’s — these questions beat a pile of scanner findings:</p>
+<ul>
+<li>Is this a gMSA (or cloud equivalent), or a user account with an SPN and a human password?</li>
+<li>What groups is it in? Could roasting it become Domain Admin?</li>
+<li>Does it have unconstrained delegation? Could anyone write RBCD on it?</li>
+<li>Does the app need unconstrained anything, or can the backend take a protocol transition to a named SPN?</li>
+<li>Are TGS requests for this SPN logged and alertable when they come from unusual users or hosts?</li>
+<li>If this account is compromised, how do we rotate it without an incident call at 2 a.m.?</li>
+</ul>
+<p>Kerberos will not get simpler. The estate can still get boring: managed secrets, thin privileges, no unconstrained delegation, KRBTGT treated like a root CA, and tickets monitored as first-class credentials.</p>
+<hr>
+<h2>Closing</h2>
+<p>Kerberoasting, AS-REP roasting, delegation abuse, and golden tickets are not four unrelated tricks. They are four ways to interact with the same objects: <strong>keys the KDC trusts</strong>, and <strong>tickets those keys seal</strong>.</p>
+<p>Active Directory made the graph. Kerberos made the tickets. Attackers follow both.</p>
+<p>The next time someone says “we should Kerberoast the domain,” translate it: <em>we should ask whether any service principal is still using a password a person typed.</em> That is a design review question. It is also a preventable class of incident.</p>
+
+      <hr>
+      <footer class="post-end">
+        <ul class="tags" aria-label="Tags"><li><a href="tags.html#kerberos">Kerberos</a></li><li><a href="tags.html#active-directory">Active Directory</a></li><li><a href="tags.html#red-team">Red Team</a></li><li><a href="tags.html#identity-security">Identity Security</a></li><li><a href="tags.html#ad-security">AD Security</a></li><li><a href="tags.html#enterprise-security">Enterprise Security</a></li><li><a href="tags.html#trust-boundaries">Trust Boundaries</a></li></ul>
+        <a href="/">← Back to all posts</a>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <section class="footer-cta">
+        <h2>Got a story about <em>trust</em> gone wrong?</h2>
+        <a class="cta-btn" href="contact.html">Open a channel <span aria-hidden="true">→</span></a>
+      </section>
+
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="footer-logo" href="/"><span>&gt;_</span> 0xAbhiram</a>
+          <p>Notes from a Product Security Engineer — red teaming, identity and GRC.</p>
+        </div>
+        <nav class="footer-col" aria-label="Footer">
+          <h2>Navigate</h2>
+          <ul>
+            <li><a href="/">Blog</a></li>
+            <li><a href="tags.html">Tags</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="footer-col">
+          <h2>Connect</h2>
+          <ul>
+            <li><a href="https://github.com/0xabhiram" rel="me">GitHub ↗</a></li>
+            <li><a href="https://x.com/0xabhiram" rel="me">X ↗</a></li>
+            <li><a href="mailto:abhiram6542@gmail.com">Email</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <dl class="footer-stats js-live" aria-hidden="true">
+        <div class="stat"><dt class="stat-label">Uptime</dt><dd class="stat-value" data-uptime="2024-12-24T15:30:00+05:30"></dd></div>
+        <div class="stat"><dt class="stat-label">Your session</dt><dd class="stat-value" data-session></dd></div>
+        <div class="stat"><dt class="stat-label">Local time · IST</dt><dd class="stat-value" data-clock></dd></div>
+        <div class="stat"><dt class="stat-label">Moon tonight</dt><dd class="stat-value"><span class="moon-ico" data-moon-ico></span><span data-moon></span></dd></div>
+      </dl>
+
+      <div class="footer-bottom">
+        <span>© 2026 Abhiram SS</span>
+        <button class="to-top" type="button">cd ~ ↑</button>
+      </div>
+    </div>
+  </footer>
+  <canvas class="embers" aria-hidden="true"></canvas>
+</body>
+</html>

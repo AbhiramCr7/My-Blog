@@ -1725,6 +1725,9 @@ pre[data-lang]::before {
   .stat:nth-child(4) { grid-column: auto; }
   .stat-label { letter-spacing: 0.1em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .stat-value { font-size: 0.82rem; white-space: normal; }
+
+  /* Intro name-blocks: keep a few, drop the rest so the sign stays readable */
+  .sp-blocks i:nth-child(n+7) { display: none; }
 }
 
 /* Intro: the name is hand-drawn, filled, then the curtain lifts ------------- */
@@ -1756,6 +1759,51 @@ pre[data-lang]::before {
   transition: opacity 0.3s var(--ease);
 }
 
+.sp-blocks {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease);
+}
+
+.sp-blocks i {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: clamp(1.35rem, 3.6vw, 2.6rem);
+  letter-spacing: -0.04em;
+  color: rgb(255 84 104 / 0.16);
+  white-space: nowrap;
+  transform: rotate(var(--r)) scale(var(--s));
+  opacity: 0;
+  animation: sp-block 1.1s var(--d) var(--ease) forwards;
+}
+
+.sp-blocks i::after { content: "0xAbhiram"; }
+
+.sp-blocks i:nth-child(1)  { --x: 4%;  --y: 8%;  --s: 0.85; --r: -18deg; --d: 0.05s; }
+.sp-blocks i:nth-child(2)  { --x: 72%; --y: 6%;  --s: 1.05; --r: 12deg;  --d: 0.12s; }
+.sp-blocks i:nth-child(3)  { --x: 12%; --y: 28%; --s: 0.7;  --r: 8deg;   --d: 0.18s; }
+.sp-blocks i:nth-child(4)  { --x: 78%; --y: 32%; --s: 0.9;  --r: -10deg; --d: 0.22s; }
+.sp-blocks i:nth-child(5)  { --x: 6%;  --y: 58%; --s: 1.15; --r: 16deg;  --d: 0.28s; }
+.sp-blocks i:nth-child(6)  { --x: 68%; --y: 62%; --s: 0.75; --r: -22deg; --d: 0.34s; }
+.sp-blocks i:nth-child(7)  { --x: 38%; --y: 4%;  --s: 0.6;  --r: 4deg;   --d: 0.4s; }
+.sp-blocks i:nth-child(8)  { --x: 42%; --y: 78%; --s: 0.95; --r: -8deg;  --d: 0.46s; }
+.sp-blocks i:nth-child(9)  { --x: 86%; --y: 78%; --s: 0.65; --r: 20deg;  --d: 0.52s; }
+.sp-blocks i:nth-child(10) { --x: 2%;  --y: 80%; --s: 0.8;  --r: -14deg; --d: 0.58s; }
+.sp-blocks i:nth-child(11) { --x: 88%; --y: 48%; --s: 0.55; --r: 6deg;   --d: 0.64s; }
+.sp-blocks i:nth-child(12) { --x: 24%; --y: 88%; --s: 0.7;  --r: 11deg;  --d: 0.7s; }
+
+.splash.is-out .sp-blocks { opacity: 0; }
+
+@keyframes sp-block {
+  from { opacity: 0; filter: blur(8px); }
+  to   { opacity: 1; filter: none; }
+}
+
 .sp-glow {
   position: absolute;
   inset: auto -10% -30% -10%;
@@ -1767,6 +1815,7 @@ pre[data-lang]::before {
 
 .sp-content {
   position: relative;
+  z-index: 2;
   width: min(92vw, 980px);
   text-align: center;
   transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.6s var(--ease);
@@ -1847,3 +1896,7 @@ pre[data-lang]::before {
 @keyframes sp-fill { to { fill-opacity: 1; stroke-opacity: 0; } }
 @keyframes sp-tag  { to { opacity: 0.8; letter-spacing: 0.32em; } }
 @keyframes sp-load { to { width: 100%; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-blocks i { animation: none; opacity: 0.9; filter: none; }
+}

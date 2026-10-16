@@ -14,6 +14,7 @@
   <meta property="og:description" content="A foundational red team–oriented breakdown of Active Directory architecture, identity flows, and trust relationships that attackers abuse in real-world enterprise compromises.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@0xabhiram">
+  <link rel="alternate" type="application/rss+xml" title="0xAbhiram Blog" href="/rss.xml">
   <link rel="canonical" href="https://0xabhiram-blogs.vercel.app/post-active-directory.html">
   <meta property="og:url" content="https://0xabhiram-blogs.vercel.app/post-active-directory.html">
   <meta property="og:image" content="https://0xabhiram-blogs.vercel.app/assets/post-ad.jpg">
@@ -21,12 +22,14 @@
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0c0507">
   <script>(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var n=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0],t=n?n.type:"navigate",inside=false;try{inside=!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(e){}if(t==="reload"||(t==="navigate"&&!inside))document.documentElement.classList.add("intro","hero-wait")})()</script>
+  <noscript><style>.js-live{display:none!important}</style></noscript>
   <link rel="stylesheet" href="styles.css">
   <script src="main.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="splash" aria-hidden="true">
+    <div class="sp-blocks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="sp-glow"></div>
     <div class="sp-content">
       <svg class="sp-sign" viewBox="0 0 1000 220">
@@ -47,7 +50,7 @@
         <text class="sp-stroke" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
         <text class="sp-shine" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
       </svg>
-      <p class="sp-tag">Security Engineer Journal</p>
+      <p class="sp-tag">Product Security Engineer</p>
     </div>
     <div class="sp-foot">
       <span>settling in for the night shift</span>
@@ -57,16 +60,16 @@
   <div class="ambient" aria-hidden="true"><span></span><span></span><span></span></div>
 
   <nav class="site-nav" aria-label="Primary">
-    <a class="brand" href="index.html" aria-label="0xAbhiram journal, home">
+    <a class="brand" href="/" aria-label="0xAbhiram journal, home">
       <span class="prompt-user">abhiram</span><span class="prompt-at">@</span><span class="prompt-host">journal</span><span class="prompt-sep">:</span><span class="prompt-path">~/blog/active-directory</span><span class="prompt-dollar">$</span><span class="cursor" aria-hidden="true">_</span>
     </a>
     <ul class="nav-links">
-      <li><a href="index.html" aria-current="page"><span class="nav-num">01</span><span class="nav-label">Blog</span></a></li>
+      <li><a href="/" aria-current="page"><span class="nav-num">01</span><span class="nav-label">Blog</span></a></li>
       <li><a href="tags.html"><span class="nav-num">02</span><span class="nav-label">Tags</span></a></li>
       <li><a href="contact.html"><span class="nav-num">03</span><span class="nav-label">Contact</span></a></li>
     </ul>
-    <div class="nav-clock" aria-label="Local time in India">
-      <span class="live-dot" aria-hidden="true"></span><span class="clock-zone">IST</span><time data-clock>--:--:--</time>
+    <div class="nav-clock js-live" aria-hidden="true">
+      <span class="live-dot"></span><span class="clock-zone">IST</span><time data-clock></time>
     </div>
     <div class="nav-progress" aria-hidden="true"></div>
   </nav>
@@ -169,7 +172,7 @@
       <hr>
       <footer class="post-end">
         <ul class="tags" aria-label="Tags"><li><a href="tags.html#active-directory">Active Directory</a></li><li><a href="tags.html#ad-security">AD Security</a></li><li><a href="tags.html#red-team">Red Team</a></li><li><a href="tags.html#identity-security">Identity Security</a></li><li><a href="tags.html#enterprise-security">Enterprise Security</a></li><li><a href="tags.html#kerberos">Kerberos</a></li><li><a href="tags.html#ldap">LDAP</a></li><li><a href="tags.html#trust-boundaries">Trust Boundaries</a></li></ul>
-        <a href="index.html">← Back to all posts</a>
+        <a href="/">← Back to all posts</a>
       </footer>
     </article>
   </main>
@@ -183,13 +186,13 @@
 
       <div class="footer-grid">
         <div class="footer-brand">
-          <a class="footer-logo" href="index.html"><span>&gt;_</span> 0xAbhiram</a>
-          <p>Notes on red teaming and product security.</p>
+          <a class="footer-logo" href="/"><span>&gt;_</span> 0xAbhiram</a>
+          <p>Notes from a Product Security Engineer — red teaming, identity and GRC.</p>
         </div>
         <nav class="footer-col" aria-label="Footer">
           <h2>Navigate</h2>
           <ul>
-            <li><a href="index.html">Blog</a></li>
+            <li><a href="/">Blog</a></li>
             <li><a href="tags.html">Tags</a></li>
             <li><a href="contact.html">Contact</a></li>
           </ul>
@@ -204,11 +207,11 @@
         </div>
       </div>
 
-      <dl class="footer-stats">
-        <div class="stat"><dt class="stat-label">Uptime</dt><dd class="stat-value" data-uptime="2024-12-24T15:30:00+05:30">—</dd></div>
-        <div class="stat"><dt class="stat-label">Your session</dt><dd class="stat-value" data-session>00:00:00</dd></div>
-        <div class="stat"><dt class="stat-label">Local time · IST</dt><dd class="stat-value" data-clock>--:--:--</dd></div>
-        <div class="stat"><dt class="stat-label">Moon tonight</dt><dd class="stat-value"><span class="moon-ico" data-moon-ico aria-hidden="true"></span><span data-moon>—</span></dd></div>
+      <dl class="footer-stats js-live" aria-hidden="true">
+        <div class="stat"><dt class="stat-label">Uptime</dt><dd class="stat-value" data-uptime="2024-12-24T15:30:00+05:30"></dd></div>
+        <div class="stat"><dt class="stat-label">Your session</dt><dd class="stat-value" data-session></dd></div>
+        <div class="stat"><dt class="stat-label">Local time · IST</dt><dd class="stat-value" data-clock></dd></div>
+        <div class="stat"><dt class="stat-label">Moon tonight</dt><dd class="stat-value"><span class="moon-ico" data-moon-ico></span><span data-moon></span></dd></div>
       </dl>
 
       <div class="footer-bottom">

@@ -41,6 +41,23 @@
     root.classList.remove("hero-wait");
   }
 
+  /* Hero name: wrap letters for the rise animation; one copy stays in HTML */
+  document.querySelectorAll("[data-split]").forEach((el) => {
+    const text = el.textContent.trim();
+    el.setAttribute("aria-label", text);
+    const wrap = document.createElement("span");
+    wrap.className = "hero-name";
+    wrap.setAttribute("aria-hidden", "true");
+    [...text].forEach((c, i) => {
+      const s = document.createElement("span");
+      s.className = "ch";
+      s.style.setProperty("--i", String(i));
+      s.textContent = c;
+      wrap.append(s);
+    });
+    el.replaceChildren(wrap);
+  });
+
   /* Nav: white over the banner, faded solid backing after ---------------- */
   const nav = document.querySelector(".site-nav");
   const hero = document.querySelector(".hero");

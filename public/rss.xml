@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+  <title>0xAbhiram Blog</title>
+  <link>https://0xabhiram-blogs.vercel.app</link>
+  <description>0xAbhiram Blog — Product Security Engineer Abhiram SS writing on red teaming, Active Directory, Kerberos, and GRC automation.</description>
+  <language>en-us</language>
+  <lastBuildDate>Fri, 16 Oct 2026 10:00:00 +0530</lastBuildDate>
+  <managingEditor>abhiram6542@gmail.com (Abhiram SS)</managingEditor>
+  <item>
+    <title>Kerberos Attacks: How Identity Tickets Become Paths Through Active Directory</title>
+    <link>https://0xabhiram-blogs.vercel.app/post-kerberos.html</link>
+    <guid isPermaLink="true">https://0xabhiram-blogs.vercel.app/post-kerberos.html</guid>
+    <pubDate>Fri, 16 Oct 2026 10:00:00 +0530</pubDate>
+    <description>A red-team mental model of Kerberos: how TGTs and service tickets work, why Kerberoasting and AS-REP roasting exist by design, and the controls that actually reduce the blast radius.</description>
+  </item>
+  <item>
+    <title>How My Team Uses Claude to Automate GRC Work — TPRM Sheets, Security Questionnaires, and Shared AI Workflows</title>
+    <link>https://0xabhiram-blogs.vercel.app/post-grc.html</link>
+    <guid isPermaLink="true">https://0xabhiram-blogs.vercel.app/post-grc.html</guid>
+    <pubDate>Sun, 28 Jun 2026 10:00:00 +0530</pubDate>
+    <description>How we use Claude Cowork to automate TPRM questionnaire responses — cutting completion time from 4 hours to 30 minutes with policy-grounded, consistent answers.</description>
+  </item>
+  <item>
+    <title>Active Directory Fundamentals: Architecture, Identity, and How AD Really Works</title>
+    <link>https://0xabhiram-blogs.vercel.app/post-active-directory.html</link>
+    <guid isPermaLink="true">https://0xabhiram-blogs.vercel.app/post-active-directory.html</guid>
+    <pubDate>Sat, 27 Dec 2025 10:00:00 +0530</pubDate>
+    <description>A foundational red team–oriented breakdown of Active Directory architecture, identity flows, and trust relationships that attackers abuse in real-world enterprise compromises.</description>
+  </item>
+  <item>
+    <title>Red Teams Don't Hack Systems — They Hack Trust</title>
+    <link>https://0xabhiram-blogs.vercel.app/post-trust.html</link>
+    <guid isPermaLink="true">https://0xabhiram-blogs.vercel.app/post-trust.html</guid>
+    <pubDate>Thu, 25 Dec 2025 10:00:00 +0530</pubDate>
+    <description>A deep analysis of why real-world compromises succeed by abusing trust assumptions rather than exploiting isolated vulnerabilities.</description>
+  </item>
+</channel>
+</rss>

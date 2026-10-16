@@ -28,6 +28,10 @@ POSTS_DIR = os.path.join(HERE, "posts")
 OUT = os.path.join(HERE, "public")
 
 POSTS = [
+    dict(md="kerberos-attacks.md", page="post-kerberos.html", path="~/blog/kerberos-attacks",
+         img="post-kerberos.jpg", log="04", card_title="Kerberos Attacks: How Identity Tickets Become Paths Through AD",
+         card_tags=["Kerberos", "Active Directory", "Identity Security"],
+         alt="A golden Kerberos ticket floating in front of a dark domain controller, with smaller silver tickets orbiting it"),
     dict(md="grc-blog-post.md", page="post-grc.html", path="~/blog/grc-automation",
          img="post-grc.jpg", log="03", card_title="How My Team Uses Claude to Automate GRC Work",
          card_tags=["GRC", "TPRM", "Security Automation"],
@@ -99,6 +103,7 @@ def seo(title, desc, url, image, kind, jsonld):
         f'  <meta property="og:description" content="{desc}">',
         '  <meta name="twitter:card" content="summary_large_image">',
         '  <meta name="twitter:creator" content="@0xabhiram">',
+        '  <link rel="alternate" type="application/rss+xml" title="0xAbhiram Blog" href="/rss.xml">',
     ]
     if SITE_URL:
         lines += [
@@ -121,11 +126,13 @@ def head(title, desc, preload=False, url="", image="assets/banner-desk.jpg", kin
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0c0507">
   <script>(function(){{if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var n=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0],t=n?n.type:"navigate",inside=false;try{{inside=!!document.referrer&&new URL(document.referrer).origin===location.origin}}catch(e){{}}if(t==="reload"||(t==="navigate"&&!inside))document.documentElement.classList.add("intro","hero-wait")}})()</script>
+  <noscript><style>.js-live{{display:none!important}}</style></noscript>
 {pre}  <link rel="stylesheet" href="styles.css">
   <script src="main.js" defer></script>
 </head>'''
 
 SPLASH='''  <div class="splash" aria-hidden="true">
+    <div class="sp-blocks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="sp-glow"></div>
     <div class="sp-content">
       <svg class="sp-sign" viewBox="0 0 1000 220">
@@ -146,7 +153,7 @@ SPLASH='''  <div class="splash" aria-hidden="true">
         <text class="sp-stroke" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
         <text class="sp-shine" x="500" y="120" text-anchor="middle" dominant-baseline="middle">0xAbhiram</text>
       </svg>
-      <p class="sp-tag">Security Engineer Journal</p>
+      <p class="sp-tag">Product Security Engineer</p>
     </div>
     <div class="sp-foot">
       <span>settling in for the night shift</span>
@@ -156,19 +163,19 @@ SPLASH='''  <div class="splash" aria-hidden="true">
   <div class="ambient" aria-hidden="true"><span></span><span></span><span></span></div>'''
 
 def nav(path, current, on_hero=False):
-    links=[("index.html","01","Blog","blog"),("tags.html","02","Tags","tags"),("contact.html","03","Contact","contact")]
+    links=[("/","01","Blog","blog"),("tags.html","02","Tags","tags"),("contact.html","03","Contact","contact")]
     li="\n".join(
         f'      <li><a href="{h}"{" aria-current=\"page\"" if k==current else ""}><span class="nav-num">{n}</span><span class="nav-label">{l}</span></a></li>'
         for h,n,l,k in links)
     return f'''<nav class="site-nav{' on-hero' if on_hero else ''}" aria-label="Primary">
-    <a class="brand" href="index.html" aria-label="0xAbhiram journal, home">
+    <a class="brand" href="/" aria-label="0xAbhiram journal, home">
       <span class="prompt-user">abhiram</span><span class="prompt-at">@</span><span class="prompt-host">journal</span><span class="prompt-sep">:</span><span class="prompt-path">{path}</span><span class="prompt-dollar">$</span><span class="cursor" aria-hidden="true">_</span>
     </a>
     <ul class="nav-links">
 {li}
     </ul>
-    <div class="nav-clock" aria-label="Local time in India">
-      <span class="live-dot" aria-hidden="true"></span><span class="clock-zone">IST</span><time data-clock>--:--:--</time>
+    <div class="nav-clock js-live" aria-hidden="true">
+      <span class="live-dot"></span><span class="clock-zone">IST</span><time data-clock></time>
     </div>
     <div class="nav-progress" aria-hidden="true"></div>
   </nav>'''
@@ -182,13 +189,13 @@ FOOTER='''<footer class="site-footer">
 
       <div class="footer-grid">
         <div class="footer-brand">
-          <a class="footer-logo" href="index.html"><span>&gt;_</span> 0xAbhiram</a>
-          <p>Notes on red teaming and product security.</p>
+          <a class="footer-logo" href="/"><span>&gt;_</span> 0xAbhiram</a>
+          <p>Notes from a Product Security Engineer — red teaming, identity and GRC.</p>
         </div>
         <nav class="footer-col" aria-label="Footer">
           <h2>Navigate</h2>
           <ul>
-            <li><a href="index.html">Blog</a></li>
+            <li><a href="/">Blog</a></li>
             <li><a href="tags.html">Tags</a></li>
             <li><a href="contact.html">Contact</a></li>
           </ul>
@@ -203,11 +210,11 @@ FOOTER='''<footer class="site-footer">
         </div>
       </div>
 
-      <dl class="footer-stats">
-        <div class="stat"><dt class="stat-label">Uptime</dt><dd class="stat-value" data-uptime="2024-12-24T15:30:00+05:30">—</dd></div>
-        <div class="stat"><dt class="stat-label">Your session</dt><dd class="stat-value" data-session>00:00:00</dd></div>
-        <div class="stat"><dt class="stat-label">Local time · IST</dt><dd class="stat-value" data-clock>--:--:--</dd></div>
-        <div class="stat"><dt class="stat-label">Moon tonight</dt><dd class="stat-value"><span class="moon-ico" data-moon-ico aria-hidden="true"></span><span data-moon>—</span></dd></div>
+      <dl class="footer-stats js-live" aria-hidden="true">
+        <div class="stat"><dt class="stat-label">Uptime</dt><dd class="stat-value" data-uptime="2024-12-24T15:30:00+05:30"></dd></div>
+        <div class="stat"><dt class="stat-label">Your session</dt><dd class="stat-value" data-session></dd></div>
+        <div class="stat"><dt class="stat-label">Local time · IST</dt><dd class="stat-value" data-clock></dd></div>
+        <div class="stat"><dt class="stat-label">Moon tonight</dt><dd class="stat-value"><span class="moon-ico" data-moon-ico></span><span data-moon></span></dd></div>
       </dl>
 
       <div class="footer-bottom">
@@ -258,19 +265,12 @@ def card(p, featured):
 
 cards = '      <ol class="post-grid" reversed>\n' + "\n\n".join(card(p, i == 0) for i, p in enumerate(POSTS)) + "\n      </ol>"
 
-letters="".join(f'<span class="ch" style="--i:{i}">{c}</span>' for i,c in enumerate("0xAbhiram"))
 index_body=f'''  <header class="hero">
     <div class="hero-glow" aria-hidden="true"></div>
     <div class="hero-content">
-      <h1 class="hero-title">
-        <span class="sr-only">0xAbhiram</span>
-        <span class="hero-name" aria-hidden="true">{letters}</span>
-      </h1>
+      <h1 class="hero-title" data-split>0xAbhiram</h1>
       <div class="hero-rule" aria-hidden="true"></div>
-      <p class="hero-tagline">
-        <span class="sr-only">Security Engineer Journal</span>
-        <span class="typed" aria-hidden="true">Security Engineer Journal</span>
-      </p>
+      <p class="hero-tagline"><span class="typed">Product Security Engineer</span></p>
     </div>
     <a class="scroll-cue" href="#articles" aria-label="Scroll to articles">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -289,19 +289,19 @@ index_body=f'''  <header class="hero">
 {cards}
     </section>
   </main>'''
-home_desc = "0xAbhiram Blog — red teaming, Active Directory, product security and GRC automation notes by Abhiram SS (0xAbhiram)."
+home_desc = "0xAbhiram Blog — Product Security Engineer Abhiram SS writing on red teaming, Active Directory, Kerberos, and GRC automation."
 home_ld = {
     "@context": "https://schema.org",
     "@graph": [
         {"@type": "WebSite", "name": SITE_NAME, "alternateName": ["0xAbhiram", "0xAbhiram Blogs"], "description": home_desc,
          **({"url": abs_url("")} if SITE_URL else {}), "author": AUTHOR},
-        {**AUTHOR, "jobTitle": "Security Engineer", "knowsAbout": ["Red Teaming", "VAPT", "Penetration Testing", "Product Security", "Cloud Security", "Active Directory"]},
+        {**AUTHOR, "jobTitle": "Product Security Engineer", "knowsAbout": ["Product Security", "Red Teaming", "VAPT", "Penetration Testing", "Cloud Security", "Active Directory", "Kerberos"]},
         {"@type": "Blog", "name": SITE_NAME, "author": AUTHOR,
          "blogPost": [{"@type": "BlogPosting", "headline": p["title"], "datePublished": p["date"],
                        **({"url": abs_url(p["page"])} if SITE_URL else {})} for p in POSTS]},
     ],
 }
-open("index.html","w").write(page("0xAbhiram Blog — Red Teaming &amp; Product Security by Abhiram SS", home_desc,
+open("index.html","w").write(page("0xAbhiram Blog — Product Security Engineer Abhiram SS", home_desc,
     "~/blog", "blog", index_body, True, True, url="", jsonld=home_ld))
 
 for p in POSTS:
@@ -323,7 +323,7 @@ for p in POSTS:
       <hr>
       <footer class="post-end">
         <ul class="tags" aria-label="Tags">{tag_links}</ul>
-        <a href="index.html">← Back to all posts</a>
+        <a href="/">← Back to all posts</a>
       </footer>
     </article>
   </main>'''
@@ -350,7 +350,7 @@ counts={}
 for p in posts:
     for t in p["tags"]: counts[t]=counts.get(t,0)+1
 order=sorted(counts, key=lambda t:(-counts[t], t.lower()))
-chips=['          <button class="tag-chip" type="button" data-tag="all" aria-pressed="true">all <span class="tag-count">3</span></button>']
+chips=[f'          <button class="tag-chip" type="button" data-tag="all" aria-pressed="true">all <span class="tag-count">{len(POSTS)}</span></button>']
 chips+=[f'          <button class="tag-chip" type="button" data-tag="{slug(t)}" aria-pressed="false" style="--w:{2 if counts[t]>1 else 1}">{t} <span class="tag-count">{counts[t]}</span></button>' for t in order]
 rows=[]
 for p in posts:
@@ -385,7 +385,7 @@ tags_body=f'''  <main id="main" class="page-offset">
         </div>
       </section>
 
-      <p class="result-line" aria-live="polite">&gt; <b id="result-count">3</b> match(es) for <b id="result-label">all tags</b></p>
+      <p class="result-line" aria-live="polite">&gt; <b id="result-count">{len(POSTS)}</b> match(es) for <b id="result-label">all tags</b></p>
 
       <ul class="tag-results">
 {nl.join(rows)}
@@ -412,7 +412,7 @@ contact_body='''  <main id="main" class="page-offset">
           </div>
           <div class="term-body">
             <p class="cmd"><span class="ps">$</span><span class="c">whoami</span></p>
-            <p class="out">Abhiram SS — product security &amp; red teaming</p>
+            <p class="out">Abhiram SS — Product Security Engineer</p>
             <p class="cmd"><span class="ps">$</span><span class="c">cat channels.txt</span></p>
             <ul class="channels">
               <li>
@@ -423,7 +423,7 @@ contact_body='''  <main id="main" class="page-offset">
               <li><a href="https://x.com/0xabhiram" rel="me"><span class="ch-key">x</span><span class="ch-val">x.com/0xabhiram</span><span class="ch-go" aria-hidden="true">↗</span></a></li>
             </ul>
             <p class="cmd"><span class="ps">$</span><span class="c">echo $OPEN_TO</span></p>
-            <p class="out">research collaboration · responsible disclosure · product security</p>
+            <p class="out">research collaboration · responsible disclosure · product security engineering</p>
             <p class="cmd"><span class="ps">$</span><span class="cursor" aria-hidden="true">_</span></p>
           </div>
         </section>
@@ -451,7 +451,7 @@ contact_body='''  <main id="main" class="page-offset">
     </div>
   </main>'''
 contact_body = contact_body.replace('data-to="CONTACT_EMAIL"', f'data-to="{CONTACT_EMAIL}"').replace('data-key="FORM_KEY"', f'data-key="{FORM_KEY}"')
-open("contact.html","w").write(page(f"Contact | {SITE_NAME}", "Get in touch with Abhiram SS (0xAbhiram) for research collaboration, responsible disclosure or product security.",
+open("contact.html","w").write(page(f"Contact | {SITE_NAME}", "Get in touch with Abhiram SS (0xAbhiram), Product Security Engineer — research collaboration, responsible disclosure, or a question about a post.",
     "~/contact", "contact", contact_body, url="contact.html"))
 
 robots = "User-agent: *\nAllow: /\n"
@@ -464,6 +464,28 @@ if SITE_URL:
     open("sitemap.xml", "w").write(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{entries}\n</urlset>\n')
     robots += f"\nSitemap: {abs_url('sitemap.xml')}\n"
 open("robots.txt", "w").write(robots)
+
+rss_items = "\n".join(
+    f"""  <item>
+    <title>{esc(p['title'])}</title>
+    <link>{abs_url(p['page'])}</link>
+    <guid isPermaLink="true">{abs_url(p['page'])}</guid>
+    <pubDate>{datetime.strptime(p['date'], '%Y-%m-%d').strftime('%a, %d %b %Y 10:00:00 +0530')}</pubDate>
+    <description>{esc(p['desc'])}</description>
+  </item>""" for p in POSTS)
+open("rss.xml", "w").write(f'''<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+  <title>{SITE_NAME}</title>
+  <link>{SITE_URL or "/"}</link>
+  <description>{esc(home_desc)}</description>
+  <language>en-us</language>
+  <lastBuildDate>{datetime.strptime(POSTS[0]["date"], "%Y-%m-%d").strftime("%a, %d %b %Y 10:00:00 +0530")}</lastBuildDate>
+  <managingEditor>abhiram6542@gmail.com (Abhiram SS)</managingEditor>
+{rss_items}
+</channel>
+</rss>
+''')
 
 print("built", len(POSTS), "posts,", len(order), "tags")
 

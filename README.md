@@ -1,8 +1,10 @@
 # 0xAbhiram Blog
 
-Red teaming, Active Directory, product security and GRC automation notes by **Abhiram SS (0xAbhiram)**.
+Red teaming, Active Directory, Kerberos and GRC automation notes by **Abhiram SS (0xAbhiram)**, Product Security Engineer.
 
 Live: https://0xabhiram-blogs.vercel.app
+
+RSS: https://0xabhiram-blogs.vercel.app/rss.xml
 
 ## Layout
 
