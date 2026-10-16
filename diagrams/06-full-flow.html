@@ -20,18 +20,15 @@ h1{font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)
 .two{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center}
 .split{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 hr.soft{border:0;border-top:1px dashed var(--line);margin:14px 0}
-body,.wrap{height:620px}</style></head>
-<body><div class="wrap"><h1>Full traffic path for one HTTPS page</h1>
+body,.wrap{height:500px}</style></head>
+<body><div class="wrap"><h1>Backend path of one HTTPS request</h1>
 <div class="steps">
-  <div class="step"><div class="n">1</div><div>You type https://shop.test. Browser is set to proxy 127.0.0.1:8080.</div></div>
-  <div class="step"><div class="n">2</div><div>Browser → Burp: <code>CONNECT shop.test:443</code>. Burp: <code>200 Connection Established</code>.</div></div>
-  <div class="step"><div class="n">3</div><div>Browser starts TLS with Burp. SNI says shop.test. Burp mints a shop.test cert, signed by Burp CA.</div></div>
-  <div class="step"><div class="n">4</div><div>Browser trusts it (because you installed the CA). Lock A is up. HTTP can now flow.</div></div>
-  <div class="step"><div class="n">5</div><div>Burp opens a real TLS session to shop.test (Lock B) and gets the real server cert.</div></div>
-  <div class="step"><div class="n">6</div><div>Browser sends <code>GET / HTTP/1.1</code> inside Lock A. Burp decrypts it. You see it in HTTP history.</div></div>
-  <div class="step"><div class="n">7</div><div>If Intercept is on, Burp pauses here. You can edit headers or body, then Forward.</div></div>
-  <div class="step"><div class="n">8</div><div>Burp re-encrypts the (maybe edited) request with Lock B and sends it to the real server.</div></div>
-  <div class="step"><div class="n">9</div><div>Server reply comes back inside Lock B. Burp decrypts, maybe intercepts again, encrypts with Lock A.</div></div>
-  <div class="step"><div class="n">10</div><div>Browser renders the page. It never saw Lock B. The server never saw Lock A.</div></div>
+  <div class="step"><div class="n">1</div><div><code>CONNECT shop.test:443</code> — not TLS yet. Burp learns the hostname.</div></div>
+  <div class="step"><div class="n">2</div><div>Browser ClientHello (SNI=shop.test). Burp mints host cert + host key, signs with CA key.</div></div>
+  <div class="step"><div class="n">3</div><div>TLS handshake Browser↔Burp finishes. <b>Session key A</b> exists only on those two sides.</div></div>
+  <div class="step"><div class="n">4</div><div>Burp ClientHello to the real server. Real cert. Handshake finishes. <b>Session key B</b>.</div></div>
+  <div class="step"><div class="n">5</div><div>HTTP arrives encrypted with A. Burp decrypts with A. Plaintext sitting in memory.</div></div>
+  <div class="step"><div class="n">6</div><div>Optional: mutate the plaintext (intercept). Then encrypt with B and send.</div></div>
+  <div class="step"><div class="n">7</div><div>Response: decrypt with B, encrypt with A. Two rooms, two keys, same HTTP in the lobby.</div></div>
 </div>
 </div></body></html>

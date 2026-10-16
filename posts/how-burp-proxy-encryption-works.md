@@ -1,185 +1,161 @@
 ---
-title: "How Burp Proxy Encrypts and Decrypts HTTPS (the full traffic path)"
-date: 2026-10-16 23:00:00 +0530
+title: "How Burp Decrypts HTTPS: CA, Fake Host Certs, and Two Session Keys"
+date: 2026-10-16 23:30:00 +0530
 author: 0xAbhiram
 tags:
   - Burp Suite
   - Proxy
   - TLS
   - HTTPS
+  - Certificates
   - Product Security
-  - Web Security
 categories:
   - Security Engineering
-description: "A plain-English walk through Burp Proxy: where it sits, why HTTPS needs two TLS sessions, how Burp's CA signs fake host certs, and the full request/response path from browser to server."
+description: "How Burp Proxy works on the wire: a self-signed CA, per-host certs signed with that CA key, two TLS sessions, and decrypt/encrypt with two different session keys. No install walkthrough."
 ---
 
-I used Burp for a while before I actually understood *why* it can show me HTTPS as if it were plaintext. The UI makes it look like magic. It is not. It is two locks, a certificate Burp made on your laptop, and a proxy that sits in the middle on purpose.
+Burp does not crack AES. It does not steal `shop.test`’s private key. It becomes a TLS server toward your browser and a TLS client toward the real site, then copies HTTP from one room to the other.
 
-This post is that path, start to finish. No scanner talk. Just how the bytes move.
+That is the whole backend. The rest of this post is just the keys.
 
-## Where Burp sits
+## The job
 
-Burp Proxy is a local HTTP proxy. By default it listens on `127.0.0.1:8080`. Your browser is told: “do not go to the internet directly. Send everything to 8080.”
+HTTPS is HTTP inside TLS. TLS does two things:
 
-Then the flow is always:
+1. **Encrypt** the bytes so a random observer cannot read them.
+2. **Prove** the other end is really `shop.test`, using a certificate.
 
-**Browser → Burp → website → Burp → browser**
+A normal browser talks TLS straight to the site. One handshake. One session key. Burp cannot read that.
 
-![Where Burp sits between the browser and the website](assets/burp/01-where.png)
+So Burp splits it.
 
-If you use **Burp’s browser** (Proxy → Intercept → Open Browser), this is already set. If you use Chrome or Firefox yourself, you point the proxy settings (or an extension like FoxyProxy) at 8080.
+![Browser, Burp, server](assets/burp/01-where.png)
 
-Until the browser talks to 8080, Burp sees nothing. That is the first “is it even working?” check.
+**Browser ↔ Burp** is TLS. **Burp ↔ server** is a different TLS. In the process, Burp is a valid endpoint of both, so it is allowed to decrypt both. Inside the process the HTTP is just text.
 
-## HTTP is easy. HTTPS is the whole story.
+![HTTP is plaintext, HTTPS is the same bytes with a lock](assets/burp/02-http-https.png)
 
-A request is just text. Something like:
+## CONNECT is how Burp learns the hostname
 
-```
-GET /login HTTP/1.1
-Host: shop.test
-Cookie: session=abc
-```
-
-On **HTTP** (port 80) that text sits on the wire as-is. Burp reads it. You read it. Done.
-
-On **HTTPS** (port 443) TLS wraps that same text. Anyone in the middle should see only ciphertext. Your cookie should not leak. That is the point of HTTPS.
-
-![Plain HTTP versus HTTPS](assets/burp/02-http-https.png)
-
-So if Burp is in the middle, how can it show `/login` and the cookie?
-
-It does not steal the website’s private key. It **starts two HTTPS conversations instead of one**.
-
-## The trick: two TLS sessions, not one
-
-Call them Lock A and Lock B.
-
-- **Lock A** — browser talking to Burp. Burp pretends to be `shop.test`.
-- **Lock B** — Burp talking to the real `shop.test`. Burp pretends to be the browser.
-
-Inside Burp, after Lock A is opened and before Lock B is used, the HTTP is just text. That is the copy you see in **Proxy → HTTP history** and in **Intercept**.
-
-![Two TLS sessions with Burp in the middle](assets/burp/04-two-tls.png)
-
-The browser never shares keys with the real server. The real server never shares keys with the browser. Burp holds both ends.
-
-That is a man-in-the-middle. In a pentest you do it to *your* browser, on *your* machine, against an app you are allowed to test. Do not point this at other people’s traffic.
-
-## First the CONNECT, then the lock
-
-For HTTPS the browser does not start TLS blindly toward 8080. It first asks Burp to open a pipe to the host:
+HTTPS via a proxy starts in the clear, once:
 
 ```
 CONNECT shop.test:443 HTTP/1.1
 ```
 
-Burp answers:
+Burp replies `200 Connection Established`. Now the browser starts TLS on that socket. From the browser’s view the peer *is* the server. The peer is Burp.
 
-```
-HTTP/1.1 200 Connection Established
-```
-
-Now the browser starts TLS down that pipe. From the browser’s point of view, “the server” is whoever is on the other end. That someone is Burp.
+The ClientHello carries **SNI** = `shop.test`. That string is what Burp prints on the fake certificate. No SNI, and Burp does not know which name to put in the cert (invisible proxying hits this).
 
 ![CONNECT then TLS](assets/burp/03-connect.png)
 
-SNI (Server Name Indication) is in that handshake. It says `shop.test`. Burp uses that name to mint a certificate for `shop.test`, so the name in the cert matches the site you typed.
+Plain HTTP never does this. There is no lock. Burp already sees `GET /…`.
 
-Plain HTTP skips CONNECT. The browser sends `GET http://shop.test/…` straight to 8080 and Burp forwards it.
+## Two TLS sessions, two session keys
 
-## Why you install Burp’s CA
+Call them Lock A and Lock B.
 
-TLS is not only encryption. It is also “are you really shop.test?”
+![Two TLS sessions](assets/burp/04-two-tls.png)
 
-In real life, `shop.test` shows a cert signed by a public Certificate Authority. Your browser already trusts those CAs. Padlock, happy.
+| | Lock A | Lock B |
+| --- | --- | --- |
+| Ends | Browser and Burp | Burp and real server |
+| Cert the “server” shows | Burp’s fake `shop.test` cert | The real `shop.test` cert |
+| Session key | **A** — lives in browser + Burp | **B** — lives in Burp + server |
+| Who can decrypt that hop | only those two | only those two |
 
-Burp cannot use shop.test’s real private key. It does not have it. So Burp does this instead:
+The browser never has key B. The server never has key A. Burp has both. That is why history can show `GET /login` as text.
 
-1. The first time you launch Burp, it creates **its own Certificate Authority** on your computer. Unique per install. Private key stays local.
-2. For each host you visit, Burp generates a **look-alike cert** for that hostname, signed by Burp’s CA.
-3. Default setting in Burp: **Generate CA-signed per-host certificates**. That is the one you want.
+![The keys involved](assets/burp/09-keys.png)
 
-If the browser does not trust Burp’s CA, you get “Your connection is not private” on every HTTPS site. That warning is correct. The cert is not from a public CA.
+Session keys are short-lived. They come out of the handshake (TLS 1.3 uses a slightly different dance than 1.2, same idea). They are what actually encrypt the HTTP. The certificates are how each side agrees “I am talking to the right peer” before those keys exist.
 
-![Why Burp’s CA has to be trusted](assets/burp/05-certs.png)
+## Burp’s CA is self-signed. Host certs are not.
 
-Two ways out:
+A certificate is: a public key + a name + extra fields, plus a **signature**.
 
-- Use **Burp’s browser**. It already trusts that CA. Easiest.
-- Or download the CA from `http://burpsuite` (or `http://127.0.0.1:8080`) and install it as a trusted root in Chrome / Firefox / the OS.
+**Self-signed** means the cert’s signature was made with the matching private key. “I vouch for myself.”
 
-PortSwigger’s own note is worth repeating: if someone else can steal that CA private key from your disk, they could MITM your HTTPS too. Do not copy `cacert.der` onto a shared machine. Do not email it.
+Burp makes a **CA certificate** the first time it runs. That CA *is* self-signed. Public key and private key of the CA are a pair on disk. The private key is the stamp.
 
-## The full path for one HTTPS page
+Then, for every hostname, Burp does *not* self-sign again. It mints a **child cert**:
 
-Here is one page load, in order.
+- new key pair for this host
+- name / SAN = `shop.test`
+- signature made with the **CA private key**
 
-![Full HTTPS path through Burp, ten steps](assets/burp/06-full-flow.png)
+![Burp CA versus per-host cert](assets/burp/05-certs.png)
 
-Slow version, same steps:
+If the host cert were self-signed, the browser would warn on every site, every time. Because it is signed by a CA the browser already trusts (Burp’s CA sitting in the trust store), the child is accepted for any name Burp puts on it.
 
-1. Proxy is on. Browser uses `127.0.0.1:8080`.
-2. `CONNECT shop.test:443` → `200 Connection Established`.
-3. Browser and Burp finish TLS (Lock A). Burp’s per-host cert is in play.
-4. Browser is happy because Burp’s CA is trusted.
-5. Burp opens Lock B to the real server and does a normal HTTPS handshake. It sees the *real* cert. You can look at that in the response / Server TLS panel if you need to.
-6. `GET /` arrives inside Lock A. Burp decrypts. History gets a row.
-7. If **Intercept is on**, the request sits there until you **Forward** or **Drop**. You can change a header, a cookie, a JSON body. Burp can also fix `Content-Length` for you after an edit.
-8. Burp sends the (maybe edited) request through Lock B.
-9. The response comes back through Lock B. Decrypt, maybe intercept again, encrypt with Lock A.
-10. The tab renders. As far as Chrome is concerned it talked to shop.test. As far as shop.test is concerned it talked to a client. Both are talking to Burp.
+That is also why one CA covers google, github, your target, everything. Same stamp, different child.
 
-That is encrypt → decrypt → (you) → encrypt, both ways.
+Default in Burp: **Generate CA-signed per-host certificates**. The other options (one self-signed blob for every host, or one fixed hostname) are workarounds, not the normal path.
 
-## Intercept is a pause button
+## How the new cert is created and signed
 
-People mix this up.
+On the first CONNECT/SNI for `shop.test` (Burp caches after that):
 
-**Proxy running** = traffic goes through Burp. History fills up.
+1. Generate an RSA (or similar) key pair. Private key stays in Burp. This key is what Burp will use as the TLS server toward the browser.
+2. Build a cert: `CN`/`SAN` = shop.test, validity window, serial, the public key from step 1, issuer = Burp CA.
+3. Hash the cert body.
+4. Sign that hash with the **CA private key**. Attach the signature.
+5. During ServerHello / certificate message, send this cert to the browser.
 
-**Intercept on** = matching messages wait for you.
+![How signing works](assets/burp/10-sign.png)
 
-![Intercept off versus on](assets/burp/07-intercept.png)
+The browser:
 
-If a page spins forever, look at the Intercept tab. Something is probably sitting there. Turn intercept off when you are just browsing. Turn it on when you want to tamper with one call.
+- hashes the cert body the same way
+- checks the signature with the **CA public key** (from the trusted CA)
+- checks the name is `shop.test`
+- checks dates
 
-You can also add rules (only this host, only this method, skip images). Same idea: pause some messages, let the rest through.
+If that passes, it agrees to derive **session key A** with whoever holds the host private key. That is Burp. Handshake done. Lock A is live.
 
-## When Burp does *not* decrypt
+Burp never needed the real site’s private key. It invented a new one and got the browser to accept it because the CA stamp matched.
 
-Sometimes you cannot, or should not, break TLS:
+On Lock B, Burp is a client. It does a normal handshake with the real server, validates the real cert the usual way, and gets **session key B**. Two handshakes. Two keys.
 
-- The app **pins** the real certificate (a lot of mobile apps). The client will not accept Burp’s look-alike, even with the CA installed.
-- You only care about one host and want the rest left alone.
-- You want the server to see the **browser’s real TLS fingerprint** (some anti-bot checks look at that).
+## Encrypt and decrypt of one request
 
-Burp calls this **TLS pass through**. The CONNECT still happens. The TLS bytes are forwarded as-is. Burp does not get a plaintext HTTP copy. History will not show the insides.
+Once both locks are up, one `GET` looks like this:
 
-![TLS pass through](assets/burp/08-passthrough.png)
+![Decrypt with A, encrypt with B](assets/burp/11-crypto.png)
 
-There is also **invisible proxying**, for clients that do not speak the proxy protocol and never send CONNECT (some thick clients, some mobile setups). Then Burp cannot learn the hostname from CONNECT, so you often pin one hostname on the listener’s certificate settings.
+**Request**
 
-## Tiny lab you can do in two minutes
+1. Browser takes `GET /login HTTP/1.1 …` and encrypts with session key A (AES-GCM or whatever the handshake picked).
+2. Burp receives ciphertext, decrypts with A. Now it is HTTP in memory. Intercept / history / Repeater all read this buffer.
+3. Burp encrypts that buffer (or an edited copy) with session key B.
+4. Real server decrypts with B.
 
-1. Open Burp. Proxy listener on 8080. Intercept **off**.
-2. Open Burp’s browser.
-3. Visit `https://portswigger.net`.
-4. In **Proxy → HTTP history**, click the row. You should see a normal `GET` and HTML — that is Lock A decrypted.
-5. Turn Intercept **on**. Reload. The request freezes. Change nothing. Hit Forward. The page finishes.
-6. Optional: in intercept, change `GET /` to `GET /does-not-exist`. Forward. You just proved the server sees Burp’s version of the request, not the browser’s original.
+**Response** is the mirror: decrypt B, maybe edit, encrypt A.
 
-If history is empty, the browser is not using 8080. Fix the proxy, not TLS.
+Nothing “unwraps TLS in general.” Each hop is a normal TLS record. Burp is just the only process that is a peer on both hops.
 
-If you get a certificate warning in an external browser, the CA is not trusted yet. Fix that, or stay on Burp’s browser.
+![Backend path](assets/burp/06-full-flow.png)
 
-## What this is not
+## What you see in Burp is after decrypt
 
-Burp is not “breaking AES”. It is not recovering the website’s private key. It is not a VPN.
+The Intercept tab is not a third encryption layer. It is a pause on that plaintext buffer between A and B. Forward = encrypt with B. Drop = never send Lock B.
 
-It is a proxy you trust, with a CA you trust, that runs two TLS sessions and lets you read the HTTP in the middle.
+If Intercept is off, the same decrypt-A / encrypt-B still happens. You just do not wait.
 
-Once that picture is clear, Repeater, Intruder, and Logger make more sense. They all eat the same plaintext Burp already peeled out of Lock A.
+## When decrypt does not happen
 
-Official bits I used while writing this: [Burp Proxy](https://portswigger.net/burp/documentation/desktop/tools/proxy), [installing Burp’s CA](https://portswigger.net/burp/documentation/desktop/external-browser-config/certificate), and the [proxy / certificate / TLS pass through settings](https://portswigger.net/burp/documentation/desktop/settings/tools/proxy).
+**TLS pass through:** Burp forwards the TLS records and never completes Lock A as a decrypting server. No session key A for that host. History cannot show HTTP. Used when the client pins the real cert (it will reject Burp’s child cert) or when you want the server to see the browser’s real TLS fingerprint.
+
+![Pass through does not open the lock](assets/burp/08-passthrough.png)
+
+Pinning is the client saying “I do not care that a CA signed this. I want *this* public key / *this* CA.” Burp’s child cert fails that check. Crypto is working. The extra check is what blocks the MITM.
+
+## Short version
+
+- TLS encryption uses **session keys**, not the CA key.
+- Burp runs **two** TLS sessions so it holds **two** session keys.
+- The **CA is self-signed**, once.
+- Each site gets a **new host cert + host key**, signed with the CA private key, name copied from SNI.
+- Browser trusts the host cert because it trusts the CA. Handshake with Burp succeeds. Decrypt A, encrypt B.
+
+That is the backend. The UI is just a window onto the plaintext between those two locks.

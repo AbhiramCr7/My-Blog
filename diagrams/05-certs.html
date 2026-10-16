@@ -20,20 +20,22 @@ h1{font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--red)
 .two{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center}
 .split{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 hr.soft{border:0;border-top:1px dashed var(--line);margin:14px 0}
-body,.wrap{height:430px}</style></head>
-<body><div class="wrap"><h1>Why you install Burp’s CA certificate</h1>
+body,.wrap{height:400px}</style></head>
+<body><div class="wrap"><h1>Two certificates Burp holds</h1>
 <div class="split">
-  <div class="box">
-    <b>Normal HTTPS</b>
-    <small>shop.test shows a cert signed by<br>a public CA (Let’s Encrypt, DigiCert…).<br><br>
-    Your browser already trusts those CAs.<br>
-    Padlock is happy.</small>
-  </div>
   <div class="box red">
-    <b>With Burp in the middle</b>
-    <small>Burp cannot use the real private key<br>of shop.test — it does not have it.<br><br>
-    So Burp makes a look-alike cert for<br>shop.test, signed by <b>Burp’s own CA</b>.</small>
+    <b>Burp CA (root)</b>
+    <small>Made once, stored on disk.<br>Self-signed: CA signs itself.<br><br>
+    Public key = “this is Burp CA”<br>
+    Private key = the stamp<br>that signs every host cert.</small>
+  </div>
+  <div class="box">
+    <b>Host cert (per site)</b>
+    <small>Made on the fly for shop.test.<br>Name in the cert = shop.test.<br><br>
+    New key pair for that host.<br>
+    Signed by Burp CA private key.<br>
+    Not self-signed — CA-signed.</small>
   </div>
 </div>
-<p class="note">The first time you launch Burp it creates a unique CA on your machine. Trust that CA in the browser (or just use Burp’s browser, which already trusts it).<br>If you skip this, every HTTPS site will scream “Your connection is not private”.</p>
+<p class="note">The CA is self-signed. The shop.test cert is not. It is a child cert. The browser trusts the child only because it already trusts the parent CA.</p>
 </div></body></html>

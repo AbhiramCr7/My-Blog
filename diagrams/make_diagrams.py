@@ -88,37 +88,67 @@ pages["04-two-tls.html"] = page("Two separate TLS sessions — this is the trick
 <p class="note">The browser never shares keys with the website. Burp holds one conversation with you, and a second conversation with the server.<br>Inside Burp the message is just HTTP, so Intercept and Repeater can show it as text.</p>
 """, 400)
 
-pages["05-certs.html"] = page("Why you install Burp’s CA certificate", """
+pages["05-certs.html"] = page("Two certificates Burp holds", """
 <div class="split">
-  <div class="box">
-    <b>Normal HTTPS</b>
-    <small>shop.test shows a cert signed by<br>a public CA (Let’s Encrypt, DigiCert…).<br><br>
-    Your browser already trusts those CAs.<br>
-    Padlock is happy.</small>
-  </div>
   <div class="box red">
-    <b>With Burp in the middle</b>
-    <small>Burp cannot use the real private key<br>of shop.test — it does not have it.<br><br>
-    So Burp makes a look-alike cert for<br>shop.test, signed by <b>Burp’s own CA</b>.</small>
+    <b>Burp CA (root)</b>
+    <small>Made once, stored on disk.<br>Self-signed: CA signs itself.<br><br>
+    Public key = “this is Burp CA”<br>
+    Private key = the stamp<br>that signs every host cert.</small>
+  </div>
+  <div class="box">
+    <b>Host cert (per site)</b>
+    <small>Made on the fly for shop.test.<br>Name in the cert = shop.test.<br><br>
+    New key pair for that host.<br>
+    Signed by Burp CA private key.<br>
+    Not self-signed — CA-signed.</small>
   </div>
 </div>
-<p class="note">The first time you launch Burp it creates a unique CA on your machine. Trust that CA in the browser (or just use Burp’s browser, which already trusts it).<br>If you skip this, every HTTPS site will scream “Your connection is not private”.</p>
+<p class="note">The CA is self-signed. The shop.test cert is not. It is a child cert. The browser trusts the child only because it already trusts the parent CA.</p>
+""", 400)
+
+pages["09-keys.html"] = page("The keys, not the UI", """
+<div class="row">
+  <div class="box"><b>CA key pair</b><small>long-term<br>signs host certs</small></div>
+  <div class="box red"><b>Host key pair</b><small>per site, on the fly<br>proves “I am shop.test”<br>to the browser</small></div>
+  <div class="box"><b>Session key A</b><small>this TLS only<br>encrypts Browser ↔ Burp</small></div>
+  <div class="box ok"><b>Session key B</b><small>this TLS only<br>encrypts Burp ↔ server</small></div>
+</div>
+<p class="note">Certificates carry public keys. Encryption of the actual HTTP uses the short-lived session keys from each handshake. Different lock, different key. Burp is the only place that has both session keys.</p>
+""", 360)
+
+pages["10-sign.html"] = page("How Burp signs a new host cert", """
+<div class="steps">
+  <div class="step"><div class="n">1</div><div>Need a cert for <b>shop.test</b>. Generate a fresh public/private key pair. The private key never leaves Burp.</div></div>
+  <div class="step"><div class="n">2</div><div>Fill the cert: Common Name / SAN = shop.test, plus dates, serial, public key.</div></div>
+  <div class="step"><div class="n">3</div><div>Hash that cert body. Sign the hash with the <b>Burp CA private key</b>. Stick the signature on the cert.</div></div>
+  <div class="step"><div class="n">4</div><div>Hand the cert to the browser during TLS. Browser hashes the body, checks the signature with the <b>CA public key</b> it already trusts.</div></div>
+  <div class="step"><div class="n">5</div><div>Match. Browser believes this cert is shop.test. Handshake continues. Session key A is born.</div></div>
+</div>
+<p class="note">Self-signed would mean the host cert signed itself. Burp does not do that by default. The host cert is signed by Burp’s CA. That is why one trusted CA covers every site you visit.</p>
+""", 500)
+
+pages["11-crypto.html"] = page("One request — decrypt, then encrypt again", """
+<div class="steps">
+  <div class="step"><div class="n">A</div><div>Browser encrypts <code>GET /login</code> with <b>session key A</b>. Wire Browser→Burp is ciphertext.</div></div>
+  <div class="step"><div class="n">A→</div><div>Burp decrypts with session key A. Inside Burp the bytes are normal HTTP. This is what you see.</div></div>
+  <div class="step"><div class="n">B</div><div>Burp encrypts that same HTTP with <b>session key B</b>. Wire Burp→server is ciphertext again.</div></div>
+  <div class="step"><div class="n">B→</div><div>Server decrypts with session key B. It never had key A. Reply does the same in reverse.</div></div>
+</div>
+<p class="note">AES (or whatever the handshake picked) is not “broken”. Burp is a valid endpoint of both handshakes, so it is allowed to decrypt. Two rooms, two keys, Burp has a door into both.</p>
 """, 430)
 
-pages["06-full-flow.html"] = page("Full traffic path for one HTTPS page", """
+pages["06-full-flow.html"] = page("Backend path of one HTTPS request", """
 <div class="steps">
-  <div class="step"><div class="n">1</div><div>You type https://shop.test. Browser is set to proxy 127.0.0.1:8080.</div></div>
-  <div class="step"><div class="n">2</div><div>Browser → Burp: <code>CONNECT shop.test:443</code>. Burp: <code>200 Connection Established</code>.</div></div>
-  <div class="step"><div class="n">3</div><div>Browser starts TLS with Burp. SNI says shop.test. Burp mints a shop.test cert, signed by Burp CA.</div></div>
-  <div class="step"><div class="n">4</div><div>Browser trusts it (because you installed the CA). Lock A is up. HTTP can now flow.</div></div>
-  <div class="step"><div class="n">5</div><div>Burp opens a real TLS session to shop.test (Lock B) and gets the real server cert.</div></div>
-  <div class="step"><div class="n">6</div><div>Browser sends <code>GET / HTTP/1.1</code> inside Lock A. Burp decrypts it. You see it in HTTP history.</div></div>
-  <div class="step"><div class="n">7</div><div>If Intercept is on, Burp pauses here. You can edit headers or body, then Forward.</div></div>
-  <div class="step"><div class="n">8</div><div>Burp re-encrypts the (maybe edited) request with Lock B and sends it to the real server.</div></div>
-  <div class="step"><div class="n">9</div><div>Server reply comes back inside Lock B. Burp decrypts, maybe intercepts again, encrypts with Lock A.</div></div>
-  <div class="step"><div class="n">10</div><div>Browser renders the page. It never saw Lock B. The server never saw Lock A.</div></div>
+  <div class="step"><div class="n">1</div><div><code>CONNECT shop.test:443</code> — not TLS yet. Burp learns the hostname.</div></div>
+  <div class="step"><div class="n">2</div><div>Browser ClientHello (SNI=shop.test). Burp mints host cert + host key, signs with CA key.</div></div>
+  <div class="step"><div class="n">3</div><div>TLS handshake Browser↔Burp finishes. <b>Session key A</b> exists only on those two sides.</div></div>
+  <div class="step"><div class="n">4</div><div>Burp ClientHello to the real server. Real cert. Handshake finishes. <b>Session key B</b>.</div></div>
+  <div class="step"><div class="n">5</div><div>HTTP arrives encrypted with A. Burp decrypts with A. Plaintext sitting in memory.</div></div>
+  <div class="step"><div class="n">6</div><div>Optional: mutate the plaintext (intercept). Then encrypt with B and send.</div></div>
+  <div class="step"><div class="n">7</div><div>Response: decrypt with B, encrypt with A. Two rooms, two keys, same HTTP in the lobby.</div></div>
 </div>
-""", 620)
+""", 500)
 
 pages["07-intercept.html"] = page("What “Intercept” actually does", """
 <div class="row">
