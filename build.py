@@ -12,7 +12,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 # Public address of the deployed site, e.g. "https://0xabhiram.dev".
 # Canonical links, social previews and sitemap.xml are only emitted once set.
-SITE_URL = "https://my-blog-beta-rosy.vercel.app"
+SITE_URL = "https://0xabhiram-blogs.vercel.app"
 
 SITE_NAME = "0xAbhiram Blog"
 AUTHOR = {

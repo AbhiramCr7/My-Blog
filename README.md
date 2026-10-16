@@ -2,7 +2,7 @@
 
 Red teaming, Active Directory, product security and GRC automation notes by **Abhiram SS (0xAbhiram)**.
 
-Live: https://my-blog-beta-rosy.vercel.app
+Live: https://0xabhiram-blogs.vercel.app
 
 ## Layout
 
