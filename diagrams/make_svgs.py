@@ -67,7 +67,7 @@ label(685, 142, "real shop.test cert", DIM, 11)+
 f'<rect x="250" y="210" width="500" height="150" rx="14" fill="{BOX}" stroke="{RED}" stroke-width="1.5"/>'+
 label(500, 240, "HTTP plaintext  ·  only here", INK, 15, "middle", "700")+
 label(500, 268, "inspect  ·  modify  ·  intercept pause  ·  history", DIM, 13)+
-label(500, 300, "Browser never holds session B. Server never holds session A.", DIM, 12)+
+label(500, 300, "Browser never holds connection B. Server never holds connection A.", DIM, 12)+
 label(500, 328, "Burp does not decrypt shop.test’s original end-to-end session.", DIM, 12)+
 arrow(500, 160, 500, 210),
 "Browser to Burp TLS A, plaintext in Burp, Burp to server TLS B")
@@ -119,7 +119,7 @@ box(280, 70, 220, 160, "Host key pair", "TLS server to browser")+
 box(520, 70, 220, 160, "Traffic keys A / B", "derived per hop")+
 box(760, 70, 200, 160, "shop.test key", "never in Burp")+
 label(500, 270, "Burp does not possess the origin server’s private key.", DIM, 14),
-"CA key, per-host key, TLS session keys, origin private key stays on server")
+"CA key, per-host key, per-connection traffic keys, origin private key stays on server")
 
 files["d-request.svg"] = svg(1000, 520, defs()+title("Request lifecycle")+
 "".join(
@@ -149,8 +149,8 @@ box(760, 90, 160, 80, "TLS A", "browser")+
 arrow(200, 130, 280, 130)+
 arrow(440, 130, 520, 130)+
 arrow(680, 130, 760, 130)+
-label(500, 230, "Same buffer, opposite direction. Plaintext exists only after session B is terminated.", DIM, 13),
-"Server response decrypted on session B then re-encrypted on session A")
+label(500, 230, "Same buffer, opposite direction. Plaintext exists only after connection B is terminated.", DIM, 13),
+"Server response terminated on connection B then protected on connection A")
 
 files["d-passthrough.svg"] = svg(1000, 260, defs()+title("TLS passthrough - no termination")+
 box(80, 80, 180, 80, "Browser")+
@@ -234,7 +234,7 @@ label(500, 280, "Finished", DIM, 12)+
 arrow(260, 345, 740, 345)+
 label(500, 335, "encrypted HTTP  (connection A traffic keys)", RED, 12)+
 label(500, 390, "Conceptual only. Connection B is a separate handshake with the origin.", DIM, 13),
-"Conceptual Browser to Burp TLS handshake on session A")
+"Conceptual Browser to Burp TLS handshake on connection A")
 
 files["d-untrusted.svg"] = svg(1000, 340, defs()+title("Why a random attacker cannot MITM HTTPS")+
 box(80, 70, 380, 180, "Burp CA trusted", "signs shop.test leaf → browser accepts", "ok")+

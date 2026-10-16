@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" role="img" aria-label="CA key, per-host key, TLS session keys, origin private key stays on server">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" role="img" aria-label="CA key, per-host key, per-connection traffic keys, origin private key stays on server">
 <rect width="1000" height="300" fill="#14060a"/>
 <defs>
   <marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
