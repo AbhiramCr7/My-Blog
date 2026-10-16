@@ -15,6 +15,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SITE_URL = "https://0xabhiram-blogs.vercel.app"
 
 SITE_NAME = "0xAbhiram Blog"
+CONTACT_EMAIL = "abhiram6542@gmail.com"
+# FormSubmit alias for CONTACT_EMAIL, so the form endpoint doesn't expose the address.
+FORM_KEY = "7eac7a4a9e3ac3c123b7f77dc749ef36"
 AUTHOR = {
     "@type": "Person",
     "name": "Abhiram SS",
@@ -425,7 +428,7 @@ contact_body='''  <main id="main" class="page-offset">
           </div>
         </section>
 
-        <form class="transmit" id="transmit" data-to="abhiram6542@gmail.com">
+        <form class="transmit" id="transmit" data-to="CONTACT_EMAIL" data-key="FORM_KEY">
           <h2>Compose transmission</h2>
           <p class="hint">Fill it in and it lands straight in my inbox. I usually reply within a day or two.</p>
           <label class="field"><span>Callsign</span><input name="name" required maxlength="60" autocomplete="name" placeholder="Your name"></label>
@@ -447,6 +450,7 @@ contact_body='''  <main id="main" class="page-offset">
       </div>
     </div>
   </main>'''
+contact_body = contact_body.replace('data-to="CONTACT_EMAIL"', f'data-to="{CONTACT_EMAIL}"').replace('data-key="FORM_KEY"', f'data-key="{FORM_KEY}"')
 open("contact.html","w").write(page(f"Contact | {SITE_NAME}", "Get in touch with Abhiram SS (0xAbhiram) for research collaboration, responsible disclosure or product security.",
     "~/contact", "contact", contact_body, url="contact.html"))
 
@@ -462,3 +466,40 @@ if SITE_URL:
 open("robots.txt", "w").write(robots)
 
 print("built", len(POSTS), "posts,", len(order), "tags")
+
+# Security headers for Vercel. The CSP hash must match the inline intro script.
+import base64, hashlib
+intro = re.search(r"<script>(.*?)</script>", open("index.html").read(), re.S).group(1)
+intro_hash = base64.b64encode(hashlib.sha256(intro.encode()).digest()).decode()
+csp = "; ".join([
+    "default-src 'self'",
+    f"script-src 'self' 'sha256-{intro_hash}'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data:",
+    "font-src 'self'",
+    "connect-src 'self' https://formsubmit.co",
+    "form-action 'self' https://formsubmit.co mailto:",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "upgrade-insecure-requests",
+])
+headers = [
+    {"key": "Content-Security-Policy", "value": csp},
+    {"key": "X-Content-Type-Options", "value": "nosniff"},
+    {"key": "X-Frame-Options", "value": "DENY"},
+    {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"},
+    {"key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"},
+    {"key": "Cross-Origin-Opener-Policy", "value": "same-origin"},
+    {"key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload"},
+]
+vercel = {
+    "framework": None,
+    "installCommand": "echo \"static site — nothing to install\"",
+    "buildCommand": "echo \"public/ is prebuilt with npm run build\"",
+    "outputDirectory": "public",
+    "cleanUrls": False,
+    "headers": [{"source": "/(.*)", "headers": headers}],
+}
+open(os.path.join(HERE, "vercel.json"), "w").write(json.dumps(vercel, indent=2, ensure_ascii=False) + "\n")
+

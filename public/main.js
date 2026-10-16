@@ -387,7 +387,7 @@
     btn.disabled = true;
     set("sending", "// transmitting…");
     try {
-      const res = await fetch(`https://formsubmit.co/ajax/${form.dataset.to}`, {
+      const res = await fetch(`https://formsubmit.co/ajax/${form.dataset.key || form.dataset.to}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
