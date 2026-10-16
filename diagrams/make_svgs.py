@@ -131,12 +131,12 @@ files["d-request.svg"] = svg(1000, 520, defs()+title("Request lifecycle")+
         "Burp: 200 Connection Established",
         "ClientHello (SNI if present, ALPN…)",
         "Burp presents per-host cert signed by Burp CA",
-        "Browser validates chain → TLS session A",
-        "Encrypted HTTP on session A",
-        "Burp decrypts - HTTP plaintext in process memory",
+        "Browser validates chain → TLS connection A",
+        "Encrypted HTTP on connection A",
+        "Burp terminates A - HTTP plaintext in memory",
         "Inspect / modify / intercept pause",
-        "Burp opens TLS session B to shop.test",
-        "Encrypted HTTP on session B",
+        "Burp opens TLS connection B to shop.test",
+        "Encrypted HTTP on connection B",
         "Origin processes the request",
     ])
 ), "Numbered request path from CONNECT to upstream TLS")
@@ -203,10 +203,10 @@ f'<rect x="280" y="55" width="440" height="500" rx="16" fill="{BOX}" stroke="{RE
 label(500, 84, "BURP PROXY", INK, 16, "middle", "700")+
 label(500, 108, "explicit HTTP proxy  ·  listener", DIM, 12)+
 box(340, 130, 320, 52, "Burp CA signs shop.test leaf", "", "burp")+
-box(340, 200, 320, 52, "2. TLS session A  (browser)")+
+box(340, 200, 320, 52, "2. TLS connection A  (browser)")+
 box(340, 272, 320, 52, "3. HTTP plaintext here", "", "burp")+
-box(340, 344, 320, 52, "4. TLS session B  (origin)")+
-label(500, 430, "Session A ≠ Session B", INK, 13, "middle", "700")+
+box(340, 344, 320, 52, "4. TLS connection B  (origin)")+
+label(500, 430, "Connection A ≠ Connection B", INK, 13, "middle", "700")+
 label(500, 456, "Has: Burp CA key, interception certs, HTTP between hops", DIM, 12)+
 label(500, 478, "Does not have: origin private key, original end-to-end TLS secrets", DIM, 12)+
 label(500, 510, "Browser trusts Burp because Burp CA is in the trust store.", DIM, 12)+
@@ -218,7 +218,7 @@ label(880, 430, "real certificate", DIM, 11)+
 label(880, 448, "real private key", DIM, 11),
 "Full Burp HTTPS interception architecture with two independent TLS sessions")
 
-files["d-handshake.svg"] = svg(1000, 420, defs()+title("Conceptual TLS handshake - session A only")+
+files["d-handshake.svg"] = svg(1000, 420, defs()+title("Conceptual TLS handshake - simplified")+
 label(180, 70, "Browser", INK, 14, "middle", "700")+
 label(820, 70, "Burp", INK, 14, "middle", "700")+
 arrow(260, 110, 740, 110)+
@@ -232,8 +232,8 @@ label(500, 235, "key-exchange data  (conceptual; 1.2 vs 1.3 differ)", DIM, 12)+
 arrow(260, 290, 740, 290)+
 label(500, 280, "Finished", DIM, 12)+
 arrow(260, 345, 740, 345)+
-label(500, 335, "encrypted HTTP  (session A traffic keys)", RED, 12)+
-label(500, 390, "Not a packet capture. Session B is a separate handshake with the origin.", DIM, 13),
+label(500, 335, "encrypted HTTP  (connection A traffic keys)", RED, 12)+
+label(500, 390, "Conceptual only. Connection B is a separate handshake with the origin.", DIM, 13),
 "Conceptual Browser to Burp TLS handshake on session A")
 
 files["d-untrusted.svg"] = svg(1000, 340, defs()+title("Why a random attacker cannot MITM HTTPS")+
@@ -241,7 +241,7 @@ box(80, 70, 380, 180, "Burp CA trusted", "signs shop.test leaf → browser accep
 box(540, 70, 380, 180, "Attacker CA not trusted", "same shape of cert → validation fails")+
 label(270, 280, "CA in trust store", OK, 13)+
 label(730, 280, "certificate validation failure", RED, 13)+
-label(500, 320, "Burp works because you explicitly trust Burp’s CA - not because the leaf “looks real.”", DIM, 13),
+label(500, 320, "Burp works because the Burp CA is explicitly trusted, not because the leaf looks real.", DIM, 13),
 "Trusted Burp CA versus untrusted attacker CA")
 
 files["d-packet.svg"] = svg(1000, 480, defs()+title("Packet flow 1-12")+
@@ -253,13 +253,13 @@ files["d-packet.svg"] = svg(1000, 480, defs()+title("Packet flow 1-12")+
         "200 Connection Established",
         "ClientHello (+ SNI if present, ALPN)",
         "Burp per-host certificate (issuer = Burp CA)",
-        "TLS handshake completes → session A",
+        "TLS handshake completes → connection A",
         "Encrypted HTTP request on A",
-        "Burp decrypts to HTTP",
-        "Forward over new TLS session B",
+        "Burp terminates A; HTTP visible",
+        "Forward over new TLS connection B",
         "Origin HTTP response on B",
-        "Burp decrypts response",
-        "Re-encrypt on session A",
+        "Burp terminates B; HTTP visible",
+        "Protect again on connection A",
         "Browser consumes the response",
     ])
 ), "Twelve-step packet flow of HTTPS through Burp")
