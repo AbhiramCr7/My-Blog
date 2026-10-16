@@ -4,21 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>0xAbhiram Blog — Product Security Engineer Abhiram SS</title>
-  <meta name="description" content="0xAbhiram Blog — Product Security Engineer Abhiram SS. Behind the scenes of how Burp Suite actually reads HTTPS.">
+  <meta name="description" content="0xAbhiram Blog — Product Security Engineer Abhiram SS. How Burp Suite intercepts HTTPS: CONNECT, Burp CA, on-the-fly certificates, and two TLS sessions.">
   <meta name="author" content="Abhiram SS (0xAbhiram)">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <meta property="og:site_name" content="0xAbhiram Blog">
   <meta property="og:type" content="website">
   <meta property="og:title" content="0xAbhiram Blog — Product Security Engineer Abhiram SS">
-  <meta property="og:description" content="0xAbhiram Blog — Product Security Engineer Abhiram SS. Behind the scenes of how Burp Suite actually reads HTTPS.">
+  <meta property="og:description" content="0xAbhiram Blog — Product Security Engineer Abhiram SS. How Burp Suite intercepts HTTPS: CONNECT, Burp CA, on-the-fly certificates, and two TLS sessions.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@0xabhiram">
   <link rel="alternate" type="application/rss+xml" title="0xAbhiram Blog" href="/rss.xml">
   <link rel="canonical" href="https://0xabhiram-blogs.vercel.app/">
   <meta property="og:url" content="https://0xabhiram-blogs.vercel.app/">
   <meta property="og:image" content="https://0xabhiram-blogs.vercel.app/assets/banner-desk.jpg">
-  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "0xAbhiram Blog", "alternateName": ["0xAbhiram", "0xAbhiram Blogs"], "description": "0xAbhiram Blog — Product Security Engineer Abhiram SS. Behind the scenes of how Burp Suite actually reads HTTPS.", "url": "https://0xabhiram-blogs.vercel.app/", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}}, {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"], "jobTitle": "Product Security Engineer", "knowsAbout": ["Product Security", "Burp Suite", "HTTPS", "Red Teaming", "VAPT", "Penetration Testing"]}, {"@type": "Blog", "name": "0xAbhiram Blog", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}, "blogPost": [{"@type": "BlogPosting", "headline": "Behind the scenes: how Burp Suite actually reads HTTPS", "datePublished": "2026-10-16", "url": "https://0xabhiram-blogs.vercel.app/post-burp.html"}]}]}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "0xAbhiram Blog", "alternateName": ["0xAbhiram", "0xAbhiram Blogs"], "description": "0xAbhiram Blog — Product Security Engineer Abhiram SS. How Burp Suite intercepts HTTPS: CONNECT, Burp CA, on-the-fly certificates, and two TLS sessions.", "url": "https://0xabhiram-blogs.vercel.app/", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}}, {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"], "jobTitle": "Product Security Engineer", "knowsAbout": ["Product Security", "Burp Suite", "HTTPS", "Red Teaming", "VAPT", "Penetration Testing"]}, {"@type": "Blog", "name": "0xAbhiram Blog", "author": {"@type": "Person", "name": "Abhiram SS", "alternateName": "0xAbhiram", "sameAs": ["https://github.com/0xabhiram", "https://x.com/0xabhiram"]}, "blogPost": [{"@type": "BlogPosting", "headline": "How Burp Suite Intercepts HTTPS: TLS, CA Certificates, On-the-Fly Certificates and Two TLS Sessions", "datePublished": "2026-10-16", "url": "https://0xabhiram-blogs.vercel.app/post-burp.html"}]}]}</script>
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0c0507">
   <script>(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var n=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0],t=n?n.type:"navigate",inside=false;try{inside=!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(e){}if(t==="reload"||(t==="navigate"&&!inside))document.documentElement.classList.add("intro","hero-wait")})()</script>
@@ -98,18 +98,18 @@
       <ol class="post-grid" reversed>
         <li class="post-card post-card--featured">
           <figure class="post-cover">
-            <img src="assets/post-burp.jpg?v=2" alt="Burp Suite behind the scenes: a proxy in the middle opening HTTPS between browser and server" width="1000" height="562" loading="lazy">
+            <img src="assets/post-burp.jpg?v=2" alt="Architecture diagram of Burp Suite terminating browser TLS and opening a separate TLS session to the origin" width="1000" height="562" loading="lazy">
             <span class="post-index">LOG 01</span>
           </figure>
           <div class="post-body">
-            <p class="post-log"><time datetime="2026-10-16">2026-10-16</time> · 7 min read</p>
-            <h3><a href="post-burp.html">Behind the scenes: how Burp Suite actually reads HTTPS</a></h3>
-            <p>Everyone knows how to hit Intercept. This is the backend: two HTTPS conversations, a stamp Burp made on your machine, and the plaintext sitting between them.</p>
+            <p class="post-log"><time datetime="2026-10-16">2026-10-16</time> · 15 min read</p>
+            <h3><a href="post-burp.html">How Burp Suite Intercepts HTTPS: Two TLS Sessions, CA and On-the-Fly Certificates</a></h3>
+            <p>Deep technical explanation of how Burp Suite intercepts HTTPS: CONNECT, TLS termination, Burp CA, per-host certificates, SNI, ALPN, HTTP/2, pinning, passthrough, invisible proxying and mTLS.</p>
             <div class="post-foot">
               <ul class="tags" aria-label="Tags">
                 <li><a href="tags.html#burp-suite">Burp Suite</a></li>
                 <li><a href="tags.html#https">HTTPS</a></li>
-                <li><a href="tags.html#proxy">Proxy</a></li>
+                <li><a href="tags.html#tls">TLS</a></li>
               </ul>
               <span class="read-more" aria-hidden="true">read <span>→</span></span>
             </div>

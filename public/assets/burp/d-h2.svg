@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 280" role="img" aria-label="HTTP/1.1 request line versus HTTP/2 pseudo-headers">
+<rect width="1000" height="280" fill="#14060a"/>
+<defs>
+  <marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+    <path d="M0,0 L8,4 L0,8 z" fill="#ff5468"/>
+  </marker>
+</defs><text x="500" y="28" text-anchor="middle" fill="#ff5468" font-family="ui-sans-serif,system-ui,sans-serif" font-size="13" font-weight="700">HTTP/1.1 VS HTTP/2 ON THE WIRE</text><rect x="60" y="70" width="420" height="160" rx="12" fill="#241014" stroke="#5a2a32" stroke-width="1.5"/><text x="270.0" y="144.0" text-anchor="middle" fill="#ffe8ea" font-family="ui-sans-serif,system-ui,sans-serif" font-size="15" font-weight="700">HTTP/1.1</text><text x="270.0" y="164.0" text-anchor="middle" fill="#c9a0a6" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12">GET /account HTTP/1.1   Host: shop.test</text><rect x="520" y="70" width="420" height="160" rx="12" fill="#241014" stroke="#5a2a32" stroke-width="1.5"/><text x="730.0" y="144.0" text-anchor="middle" fill="#ffe8ea" font-family="ui-sans-serif,system-ui,sans-serif" font-size="15" font-weight="700">HTTP/2</text><text x="730.0" y="164.0" text-anchor="middle" fill="#c9a0a6" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12">:method GET   :path /account   :authority shop.test</text><text x="500" y="260" text-anchor="middle" fill="#c9a0a6" font-family="ui-sans-serif,system-ui,sans-serif" font-size="13" font-weight="400">ALPN in ClientHello advertises h2 / http/1.1. Burp can speak either hop independently.</text>
+</svg>

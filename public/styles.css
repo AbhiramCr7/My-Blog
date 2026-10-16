@@ -846,6 +846,41 @@ main,
   background: #14060a;
 }
 
+.prose .note-box,
+.prose .warn-box,
+.prose .call-box {
+  margin: 1.5rem 0 0;
+  padding: 1rem 1.15rem;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgb(20 8 12 / 0.6);
+  font-size: 0.95rem;
+}
+.prose .note-box { border-color: rgb(255 84 104 / 0.35); }
+.prose .warn-box { border-color: rgb(255 180 80 / 0.4); }
+.prose .call-box { border-color: rgb(126 226 168 / 0.35); }
+.prose .note-box p,
+.prose .warn-box p,
+.prose .call-box p { margin: 0; }
+.prose .note-box strong,
+.prose .call-box strong { color: #ffd9dd; }
+
+.prose details.iq {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  background: rgb(20 8 12 / 0.5);
+}
+.prose details.iq + details.iq { margin-top: 0.55rem; }
+.prose details.iq summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #ffd9dd;
+}
+.prose details.iq p { margin-top: 0.65rem; color: var(--muted); font-size: 0.95rem; }
+
+.prose h2 { font-size: 1.4rem; }
+
 .prose ul,
 .prose ol { padding-left: 1.25em; }
 .prose li + li { margin-top: 0.4em; }
