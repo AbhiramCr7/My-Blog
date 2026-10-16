@@ -344,9 +344,9 @@
     const found = links(text);
     if (found.length > 3) return "please keep it to 3 links or fewer.";
     for (const url of found) {
-      if (SHORTENER.test(url)) return "link shorteners aren't allowed — paste the full link.";
+      if (SHORTENER.test(url)) return "link shorteners aren't allowed - paste the full link.";
       if (/^(?:[a-z]+:\/\/)?[^\/\s]*@/i.test(url)) return "links with credentials or '@' tricks aren't allowed.";
-      if (/^(?:[a-z]+:\/\/)?(?:\d{1,3}\.){3}\d{1,3}/.test(url)) return "raw IP links aren't allowed — defang IOCs like 10[.]0[.]0[.]1.";
+      if (/^(?:[a-z]+:\/\/)?(?:\d{1,3}\.){3}\d{1,3}/.test(url)) return "raw IP links aren't allowed - defang IOCs like 10[.]0[.]0[.]1.";
       if (RISKY_FILE.test(url.split(/[?#]/)[0])) return "links to executables or archives aren't allowed.";
     }
     return "";
@@ -383,7 +383,7 @@
 
     if (raw.get("_honey") || Date.now() - openedAt < 3000) {
       form.reset();
-      return set("sent", "// transmission received ✓ — I'll get back to you soon.");
+      return set("sent", "// transmission received ✓ - I'll get back to you soon.");
     }
 
     const { v, field, error } = validate(raw);
@@ -396,11 +396,11 @@
 
     const last = Number(localStorage.getItem("tx-last") || 0);
     const wait = Math.ceil((60000 - (Date.now() - last)) / 1000);
-    if (wait > 0) return set("error", `// cooling down — try again in ${wait}s.`);
+    if (wait > 0) return set("error", `// cooling down - try again in ${wait}s.`);
     const fingerprint = `${v.email}|${v.message}`.slice(0, 500);
     if (localStorage.getItem("tx-sig") === fingerprint) return set("error", "// this exact message was already sent.");
 
-    const subject = `[${v.topic}] ${v.subject || "Hello"} — from ${v.name}`;
+    const subject = `[${v.topic}] ${v.subject || "Hello"} - from ${v.name}`;
     btn.disabled = true;
     set("sending", "// transmitting…");
     try {
@@ -425,10 +425,10 @@
       localStorage.setItem("tx-last", String(Date.now()));
       localStorage.setItem("tx-sig", fingerprint);
       form.reset();
-      set("sent", "// transmission received ✓ — I'll get back to you soon.");
+      set("sent", "// transmission received ✓ - I'll get back to you soon.");
     } catch {
-      set("error", "// relay failed — opening your mail app instead…");
-      const body = `${v.message}\n\n— ${v.name} <${v.email}>`;
+      set("error", "// relay failed - opening your mail app instead…");
+      const body = `${v.message}\n\n- ${v.name} <${v.email}>`;
       window.location.href =
         `mailto:${form.dataset.to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     } finally {

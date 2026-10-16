@@ -2,7 +2,7 @@
   "name": "0xabhiram-blog",
   "version": "1.0.0",
   "private": true,
-  "description": "0xAbhiram Blog — red teaming and product security journal by Abhiram SS",
+  "description": "0xAbhiram Blog - red teaming and product security journal by Abhiram SS",
   "scripts": {
     "build": "python3 build.py",
     "serve": "python3 -m http.server 5500 -d public"

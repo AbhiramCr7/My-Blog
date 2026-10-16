@@ -133,7 +133,7 @@ files["d-request.svg"] = svg(1000, 520, defs()+title("Request lifecycle")+
         "Burp presents per-host cert signed by Burp CA",
         "Browser validates chain → TLS session A",
         "Encrypted HTTP on session A",
-        "Burp decrypts — HTTP plaintext in process memory",
+        "Burp decrypts - HTTP plaintext in process memory",
         "Inspect / modify / intercept pause",
         "Burp opens TLS session B to shop.test",
         "Encrypted HTTP on session B",
@@ -152,7 +152,7 @@ arrow(680, 130, 760, 130)+
 label(500, 230, "Same buffer, opposite direction. Plaintext exists only after session B is terminated.", DIM, 13),
 "Server response decrypted on session B then re-encrypted on session A")
 
-files["d-passthrough.svg"] = svg(1000, 260, defs()+title("TLS passthrough — no termination")+
+files["d-passthrough.svg"] = svg(1000, 260, defs()+title("TLS passthrough - no termination")+
 box(80, 80, 180, 80, "Browser")+
 box(410, 80, 180, 80, "Burp", "forwards TLS records", "burp")+
 box(740, 80, 180, 80, "shop.test")+
@@ -175,7 +175,7 @@ box(520, 70, 420, 160, "HTTP/2", ":method GET   :path /account   :authority shop
 label(500, 260, "ALPN in ClientHello advertises h2 / http/1.1. Burp can speak either hop independently.", DIM, 13),
 "HTTP/1.1 request line versus HTTP/2 pseudo-headers")
 
-files["d-invisible.svg"] = svg(1000, 300, defs()+title("Invisible proxying — no CONNECT")+
+files["d-invisible.svg"] = svg(1000, 300, defs()+title("Invisible proxying - no CONNECT")+
 box(40, 70, 200, 90, "Thick client", "not proxy-aware")+
 box(400, 70, 200, 90, "Burp listener", "invisible mode", "burp")+
 box(760, 70, 200, 90, "Origin")+
@@ -218,7 +218,7 @@ label(880, 430, "real certificate", DIM, 11)+
 label(880, 448, "real private key", DIM, 11),
 "Full Burp HTTPS interception architecture with two independent TLS sessions")
 
-files["d-handshake.svg"] = svg(1000, 420, defs()+title("Conceptual TLS handshake — session A only")+
+files["d-handshake.svg"] = svg(1000, 420, defs()+title("Conceptual TLS handshake - session A only")+
 label(180, 70, "Browser", INK, 14, "middle", "700")+
 label(820, 70, "Burp", INK, 14, "middle", "700")+
 arrow(260, 110, 740, 110)+
@@ -226,7 +226,7 @@ label(500, 100, "ClientHello   SNI=shop.test (if present)   ALPN=h2,http/1.1", D
 arrow(740, 155, 260, 155)+
 label(500, 145, "ServerHello", DIM, 12)+
 arrow(740, 200, 260, 200)+
-label(500, 190, "Certificate  —  Burp-generated leaf for shop.test", DIM, 12)+
+label(500, 190, "Certificate - Burp-generated leaf for shop.test", DIM, 12)+
 arrow(740, 245, 260, 245)+
 label(500, 235, "key-exchange data  (conceptual; 1.2 vs 1.3 differ)", DIM, 12)+
 arrow(260, 290, 740, 290)+
@@ -241,10 +241,10 @@ box(80, 70, 380, 180, "Burp CA trusted", "signs shop.test leaf → browser accep
 box(540, 70, 380, 180, "Attacker CA not trusted", "same shape of cert → validation fails")+
 label(270, 280, "CA in trust store", OK, 13)+
 label(730, 280, "certificate validation failure", RED, 13)+
-label(500, 320, "Burp works because you explicitly trust Burp’s CA — not because the leaf “looks real.”", DIM, 13),
+label(500, 320, "Burp works because you explicitly trust Burp’s CA - not because the leaf “looks real.”", DIM, 13),
 "Trusted Burp CA versus untrusted attacker CA")
 
-files["d-packet.svg"] = svg(1000, 480, defs()+title("Packet flow 1–12")+
+files["d-packet.svg"] = svg(1000, 480, defs()+title("Packet flow 1-12")+
 "".join(
     f'<rect x="40" y="{48+i*34}" width="28" height="24" rx="12" fill="{RED}"/><text x="54" y="{65+i*34}" text-anchor="middle" fill="#fff" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">{i+1}</text>'
     f'<text x="84" y="{65+i*34}" fill="{INK}" font-size="13" font-family="ui-sans-serif,system-ui,sans-serif">{t}</text>'

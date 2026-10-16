@@ -1,5 +1,5 @@
 /* ==========================================================================
-   0xAbhiram — Security Engineer Journal · Crimson Night
+   0xAbhiram - Security Engineer Journal · Crimson Night
    ========================================================================== */
 
 /* Tokens ------------------------------------------------------------------ */
@@ -1672,7 +1672,7 @@ pre[data-lang]::before {
   .cmd .cursor { animation: none; }
 }
 
-/* Phone layout (≤600px only — the laptop layout is untouched) ------------- */
+/* Phone layout (≤600px only - the laptop layout is untouched) ------------- */
 @media (max-width: 600px) {
   body { font-size: 1.0625rem; line-height: 1.72; }
 

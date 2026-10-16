@@ -174,18 +174,18 @@ Signs dynamically generated host certificates. Long-lived, on disk, unique per i
 Burp uses this as the **TLS server** toward the browser (session A). Generated for the host (implementation may cache).
 
 **C. TLS traffic secrets / keys (per connection)**  
-The handshake **establishes shared cryptographic secrets from which traffic-encryption keys are derived**. Session A and session B each do this independently. Labels “key A / key B” in diagrams mean those derived keys for that hop — not a single AES key copied off the origin.
+The handshake **establishes shared cryptographic secrets from which traffic-encryption keys are derived**. Session A and session B each do this independently. Labels “key A / key B” in diagrams mean those derived keys for that hop - not a single AES key copied off the origin.
 
 **D. Origin server private key**  
 Stays on `shop.test`. **Burp does not need it** to open session B. Burp is not decrypting an original Browser → origin TLS session; that session was never the path.
 
-## 6b. TLS 1.2 vs TLS 1.3 — why “session key” is a teaching model
+## 6b. TLS 1.2 vs TLS 1.3 - why “session key” is a teaching model
 
 The A/B picture is the right *architecture*. The cryptography under it is a bit richer.
 
-**TLS 1.2** supports several handshake / key-exchange modes. Historically that included RSA key transport; modern secure deployments generally prefer ephemeral Diffie–Hellman ((EC)DHE).
+**TLS 1.2** supports several handshake / key-exchange modes. Historically that included RSA key transport; modern secure deployments generally prefer ephemeral Diffie-Hellman ((EC)DHE).
 
-**TLS 1.3** uses ephemeral Diffie–Hellman-style key agreement, derives traffic secrets through the handshake, and does **not** simply send an AES session key over the network. Ephemeral key exchange is why you get forward secrecy: stealing the long-term private key later does not unwind past traffic that used ephemeral secrets.
+**TLS 1.3** uses ephemeral Diffie-Hellman-style key agreement, derives traffic secrets through the handshake, and does **not** simply send an AES session key over the network. Ephemeral key exchange is why you get forward secrecy: stealing the long-term private key later does not unwind past traffic that used ephemeral secrets.
 
 Burp, as a TLS endpoint on A and as a TLS client on B, participates in whatever handshake the peer negotiates (within the protocols the listener / Java TLS settings allow). That is still **termination + new connection**, not “extracting the origin’s session key.”
 
@@ -236,7 +236,7 @@ Authorization: Bearer eyJ…
 12. Burp sends the (possibly edited) HTTP **encrypted under B**.  
 13. Origin handles it as a normal TLS client request.
 
-![Packet flow 1–12](assets/burp/d-packet.svg)
+![Packet flow 1-12](assets/burp/d-packet.svg)
 
 ## 8. Intercept ON vs OFF
 
@@ -281,7 +281,7 @@ Browser
  Burp
    |
    |  validates the origin’s real certificate
-   |  (chain/trust, hostname, validity — per Burp TLS settings)
+   |  (chain/trust, hostname, validity - per Burp TLS settings)
    v
 shop.test
 ```
@@ -317,7 +317,7 @@ Burp CA trusted                         Attacker CA not trusted
 
 The TLS `ClientHello` **can** include the **SNI** extension (`server_name`), which **normally** carries the hostname the client intends to reach. It is not a required field of every ClientHello.
 
-On an explicit-proxy path you already had CONNECT. SNI still matters for choosing which **leaf** to present, for origin virtual-hosting on session B, and especially for **invisible** mode where CONNECT never happened. If SNI is **absent**, Burp cannot take the name from TLS and must use CONNECT (explicit proxy), `Host` after decrypt, a listener configured with a **specific hostname** cert, or a fallback self-signed leaf — see invisible proxying.
+On an explicit-proxy path you already had CONNECT. SNI still matters for choosing which **leaf** to present, for origin virtual-hosting on session B, and especially for **invisible** mode where CONNECT never happened. If SNI is **absent**, Burp cannot take the name from TLS and must use CONNECT (explicit proxy), `Host` after decrypt, a listener configured with a **specific hostname** cert, or a fallback self-signed leaf - see invisible proxying.
 
 ## 13. ALPN: which HTTP runs inside TLS
 
@@ -410,7 +410,7 @@ CONNECT is how the client names the destination **before** TLS.
 
 Burp still has to decide destination and certificate name from **whatever is available**: destination address of the redirected connection; after TLS starts, **SNI if present**; after decrypt, the HTTP **`Host`** header. Invisible proxying does **not** always depend on SNI, and SNI is **not** always present.
 
-If the name is unknown before `ServerHello`, PortSwigger documents a static self-signed fallback, or configure the listener to generate a **CA-signed certificate with a specific hostname**. Outbound must not resolve back to the same listener (loop)—force outbound to the real IP, or override Burp hostname resolution.
+If the name is unknown before `ServerHello`, PortSwigger documents a static self-signed fallback, or configure the listener to generate a **CA-signed certificate with a specific hostname**. Outbound must not resolve back to the same listener (loop) - force outbound to the real IP, or override Burp hostname resolution.
 
 ![Invisible proxying](assets/burp/d-invisible.svg)
 
@@ -472,7 +472,7 @@ Burp can present client certs **upstream** (`Settings → Network → TLS → Cl
 
 Anyone who has the Burp CA **private key**, plus a victim that **trusts that CA**, can mint leaves for arbitrary names and run the same two-session attack without your consent. PortSwigger: do not disclose that key; a holder may intercept HTTPS even when you are not running Burp.
 
-Treat the CA material as a lab root. Don’t copy it to shared disks. Rotate (`Regenerate CA certificate`) if it leaked. This is the same class of risk as any corporate SSL-inspection root—narrower, because the trust anchor is usually only on **your** test browser.
+Treat the CA material as a lab root. Don’t copy it to shared disks. Rotate (`Regenerate CA certificate`) if it leaked. This is the same class of risk as any corporate SSL-inspection root - narrower, because the trust anchor is usually only on **your** test browser.
 
 ## 22. Worked example
 
@@ -521,6 +521,6 @@ Burp does not break TLS cryptographically. It terminates one TLS connection and 
 
 ## How I would explain this in sixty seconds
 
-Burp is an intercepting HTTP proxy. With the browser using the listener, HTTPS hits Burp first. A proxy-aware browser sends **CONNECT** to open a tunnel to the destination. Burp then **terminates** the client TLS connection and presents a **per-host certificate signed by Burp’s installation CA**, which the browser trusts because that CA is in its trust store. That is **session A**. Burp opens a **separate** TLS connection to the origin—**session B**—and validates the **real** server certificate. HTTP exists as plaintext only **between** those two sessions, which is how inspect/modify/Intercept work. Burp re-encrypts on each hop. It does not decrypt the origin’s original end-to-end session; it never had that session, and it does not have the origin private key.
+Burp is an intercepting HTTP proxy. With the browser using the listener, HTTPS hits Burp first. A proxy-aware browser sends **CONNECT** to open a tunnel to the destination. Burp then **terminates** the client TLS connection and presents a **per-host certificate signed by Burp’s installation CA**, which the browser trusts because that CA is in its trust store. That is **session A**. Burp opens a **separate** TLS connection to the origin - **session B** - and validates the **real** server certificate. HTTP exists as plaintext only **between** those two sessions, which is how inspect/modify/Intercept work. Burp re-encrypts on each hop. It does not decrypt the origin’s original end-to-end session; it never had that session, and it does not have the origin private key.
 
 Primary references (paraphrased, not copied): [Burp Proxy](https://portswigger.net/burp/documentation/desktop/tools/proxy), [proxy settings](https://portswigger.net/burp/documentation/desktop/settings/tools/proxy) (CA-signed per-host certs, passthrough, listener HTTP/2), [managing CA certificates](https://portswigger.net/burp/documentation/desktop/tools/proxy/manage-certificates), [invisible proxying](https://portswigger.net/burp/documentation/desktop/tools/proxy/invisible), [HTTP/2](https://portswigger.net/burp/documentation/desktop/http2), [TLS / client certificates](https://portswigger.net/burp/documentation/desktop/settings/network/tls).
