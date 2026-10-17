@@ -431,13 +431,19 @@ main,
 }
 
 .hero-blog {
-  margin: 0.08em 0 0;
+  margin: 0.06em 0 0;
   font-family: var(--font-sans);
-  font-size: clamp(2.05rem, 6.8vw, 4.4rem);
+  font-size: clamp(1.55rem, 5vw, 3.2rem);
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.02em;
   color: #fff;
+}
+
+.hero-blog .ch {
+  animation-delay:
+    calc(420ms + var(--i) * 75ms),
+    calc(1.9s + var(--i) * 55ms);
 }
 
 .hero-name {
@@ -1699,7 +1705,7 @@ pre[data-lang]::before {
   /* Hero */
   .hero { padding: var(--nav-h) 1.25rem 6rem; }
   .hero-title { font-size: clamp(2.9rem, 15vw, 4rem); }
-  .hero-blog { font-size: clamp(1.7rem, 9.5vw, 2.5rem); }
+  .hero-blog { font-size: clamp(1.25rem, 7.2vw, 1.85rem); }
   .hero-tagline { font-size: 0.6875rem; letter-spacing: 0.16em; }
   .scroll-cue { bottom: 2.25rem; }
 
@@ -1820,9 +1826,17 @@ pre[data-lang]::before {
 
 .sp-sign text {
   font-family: var(--font-sans);
-  font-size: 168px;
   font-weight: 800;
+}
+
+.sp-name {
+  font-size: 168px;
   letter-spacing: -5px;
+}
+
+.sp-blogs {
+  font-size: 92px;
+  letter-spacing: -3px;
 }
 
 .sp-stroke {
@@ -1837,20 +1851,15 @@ pre[data-lang]::before {
     sp-fill 0.6s 1.3s var(--ease) forwards;
 }
 
-.sp-shine { fill: url(#sp-shine); }
-
-.sp-tag {
-  margin: 0.1rem 0 0;
-  font-family: var(--font-sans);
-  font-size: clamp(2.5rem, 8vw, 5.4rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  text-transform: none;
-  color: #fff;
-  text-shadow: 0 0 22px rgb(255 46 77 / 0.45);
-  opacity: 0;
-  animation: sp-tag 0.8s 1.5s var(--ease) forwards;
+.sp-stroke.sp-blogs {
+  stroke-width: 1.4;
+  animation:
+    sp-draw 1.15s 0.65s cubic-bezier(0.45, 0, 0.2, 1) forwards,
+    sp-fill 0.55s 1.55s var(--ease) forwards;
 }
+
+.sp-shine { fill: url(#sp-shine); }
+.sp-shine-b { fill: url(#sp-shine-b); }
 
 .sp-foot {
   position: absolute;
@@ -1891,9 +1900,4 @@ pre[data-lang]::before {
 @keyframes sp-glow { to { opacity: 1; } }
 @keyframes sp-draw { to { stroke-dasharray: 1600 0; } }
 @keyframes sp-fill { to { fill-opacity: 1; stroke-opacity: 0; } }
-@keyframes sp-tag  { to { opacity: 1; } }
 @keyframes sp-load { to { width: 100%; } }
-
-@media (max-width: 600px) {
-  .sp-tag { font-size: clamp(1.9rem, 12vw, 2.85rem); }
-}
