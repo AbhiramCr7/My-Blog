@@ -259,6 +259,7 @@ index_body=f'''  <header class="hero">
     <div class="hero-glow" aria-hidden="true"></div>
     <div class="hero-content">
       <h1 class="hero-title" data-split>0xAbhiram</h1>
+      <p class="hero-blog" data-split>Blog</p>
       <div class="hero-rule" aria-hidden="true"></div>
       <p class="hero-tagline"><span class="typed">Product Security Engineer</span></p>
     </div>

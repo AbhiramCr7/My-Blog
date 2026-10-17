@@ -430,6 +430,16 @@ main,
   color: #fff;
 }
 
+.hero-blog {
+  margin: 0.08em 0 0;
+  font-family: var(--font-sans);
+  font-size: clamp(2.05rem, 6.8vw, 4.4rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
 .hero-name {
   display: inline-flex;
   perspective: 700px;
@@ -1689,6 +1699,7 @@ pre[data-lang]::before {
   /* Hero */
   .hero { padding: var(--nav-h) 1.25rem 6rem; }
   .hero-title { font-size: clamp(2.9rem, 15vw, 4rem); }
+  .hero-blog { font-size: clamp(1.7rem, 9.5vw, 2.5rem); }
   .hero-tagline { font-size: 0.6875rem; letter-spacing: 0.16em; }
   .scroll-cue { bottom: 2.25rem; }
 
@@ -1829,12 +1840,14 @@ pre[data-lang]::before {
 .sp-shine { fill: url(#sp-shine); }
 
 .sp-tag {
-  margin: 0.5rem 0 0;
-  font-family: var(--font-mono);
-  font-size: clamp(0.65rem, 1.6vw, 0.8rem);
-  letter-spacing: 0.7em;
-  text-transform: uppercase;
-  color: #ffd9dd;
+  margin: 0.1rem 0 0;
+  font-family: var(--font-sans);
+  font-size: clamp(2.5rem, 8vw, 5.4rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: #fff;
+  text-shadow: 0 0 22px rgb(255 46 77 / 0.45);
   opacity: 0;
   animation: sp-tag 0.8s 1.5s var(--ease) forwards;
 }
@@ -1878,5 +1891,9 @@ pre[data-lang]::before {
 @keyframes sp-glow { to { opacity: 1; } }
 @keyframes sp-draw { to { stroke-dasharray: 1600 0; } }
 @keyframes sp-fill { to { fill-opacity: 1; stroke-opacity: 0; } }
-@keyframes sp-tag  { to { opacity: 0.8; letter-spacing: 0.32em; } }
+@keyframes sp-tag  { to { opacity: 1; } }
 @keyframes sp-load { to { width: 100%; } }
+
+@media (max-width: 600px) {
+  .sp-tag { font-size: clamp(1.9rem, 12vw, 2.85rem); }
+}
