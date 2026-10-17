@@ -16,9 +16,36 @@ categories:
 description: "How Burp Suite lets you inspect encrypted web traffic"
 ---
 
+## What this article covers
+
+This article answers one question: if HTTPS encrypts web traffic, how can [Burp Suite](https://portswigger.net/burp) still show you the request?
+
+We will cover, in this order:
+
+1. The puzzle: a login that HTTPS should hide, but Burp can still display.
+2. How your browser first talks to Burp (a proxy, not the website).
+3. Why the browser trusts Burp (Burp's own certificate authority).
+4. The certificate Burp creates for the site you visited.
+5. The two separate secure connections: browser to Burp, then Burp to the website.
+6. Why Burp does not need the website's private key.
+7. One full request, step by step.
+8. What can stop Burp from reading HTTPS.
+
+You do not need to have used Burp before. You do not need to already know TLS. Each idea is explained in ordinary English first, then with the correct technical words.
+
+**By the end you will be able to explain:**
+
+- why Burp can read HTTPS requests
+- why the browser trusts Burp
+- why two separate encrypted connections exist
+- why Burp does not need the website's private key
+- the difference between intercepting TLS and only forwarding it
+
+## How Can Burp Read HTTPS?
+
 Imagine you log in to a website. You type a username and a password. Your browser sends that login to the site, and HTTPS is supposed to protect it while it travels across the internet. Anyone sitting on the network should see scrambled data, not your password.
 
-Now open [Burp Suite](https://portswigger.net/burp), a tool security testers use to inspect how a web application behaves. Point your browser at Burp and log in again. In Burp you can read the same request. You can see the path, the headers, even the password field. You can change a value and send it on.
+Now open Burp Suite, a tool security testers use to inspect how a web application behaves. Point your browser at Burp and log in again. In Burp you can read the same request. You can see the path, the headers, even the password field. You can change a value and send it on.
 
 That should feel wrong.
 
@@ -26,18 +53,7 @@ If HTTPS encrypts the information, how can Burp read it? Does Burp know the webs
 
 Neither explanation is correct.
 
-The interesting part is not a magical decryptor. It is what happens *between* your browser and the website. This article follows one request and shows what Burp actually does.
-
-By the end you will understand:
-
-- why Burp can read HTTPS requests
-- why the browser trusts Burp
-- why two separate encrypted connections exist
-- why Burp does not need the website's private key
-
-You do not need to have used Burp before. You do not need to already know TLS. We will add the technical words after the idea is clear.
-
-## How Can Burp Read HTTPS?
+The interesting part is not a magical decryptor. It is what happens *between* your browser and the website. Let's follow one request and see what Burp actually does.
 
 A useful picture is a locked box.
 

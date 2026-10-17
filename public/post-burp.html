@@ -87,21 +87,35 @@
         <p class="lede">How Burp Suite lets you inspect encrypted web traffic</p>
       </header>
 
-<p>Imagine you log in to a website. You type a username and a password. Your browser sends that login to the site, and HTTPS is supposed to protect it while it travels across the internet. Anyone sitting on the network should see scrambled data, not your password.</p>
-<p>Now open <a href="https://portswigger.net/burp">Burp Suite</a>, a tool security testers use to inspect how a web application behaves. Point your browser at Burp and log in again. In Burp you can read the same request. You can see the path, the headers, even the password field. You can change a value and send it on.</p>
-<p>That should feel wrong.</p>
-<p>If HTTPS encrypts the information, how can Burp read it? Does Burp know the website&#39;s secret key? Does it somehow break HTTPS?</p>
-<p>Neither explanation is correct.</p>
-<p>The interesting part is not a magical decryptor. It is what happens <em>between</em> your browser and the website. This article follows one request and shows what Burp actually does.</p>
-<p>By the end you will understand:</p>
+<h2>What this article covers</h2>
+<p>This article answers one question: if HTTPS encrypts web traffic, how can <a href="https://portswigger.net/burp">Burp Suite</a> still show you the request?</p>
+<p>We will cover, in this order:</p>
+<ol>
+<li>The puzzle: a login that HTTPS should hide, but Burp can still display.</li>
+<li>How your browser first talks to Burp (a proxy, not the website).</li>
+<li>Why the browser trusts Burp (Burp&#39;s own certificate authority).</li>
+<li>The certificate Burp creates for the site you visited.</li>
+<li>The two separate secure connections: browser to Burp, then Burp to the website.</li>
+<li>Why Burp does not need the website&#39;s private key.</li>
+<li>One full request, step by step.</li>
+<li>What can stop Burp from reading HTTPS.</li>
+</ol>
+<p>You do not need to have used Burp before. You do not need to already know TLS. Each idea is explained in ordinary English first, then with the correct technical words.</p>
+<p><strong>By the end you will be able to explain:</strong></p>
 <ul>
 <li>why Burp can read HTTPS requests</li>
 <li>why the browser trusts Burp</li>
 <li>why two separate encrypted connections exist</li>
 <li>why Burp does not need the website&#39;s private key</li>
+<li>the difference between intercepting TLS and only forwarding it</li>
 </ul>
-<p>You do not need to have used Burp before. You do not need to already know TLS. We will add the technical words after the idea is clear.</p>
 <h2>How Can Burp Read HTTPS?</h2>
+<p>Imagine you log in to a website. You type a username and a password. Your browser sends that login to the site, and HTTPS is supposed to protect it while it travels across the internet. Anyone sitting on the network should see scrambled data, not your password.</p>
+<p>Now open Burp Suite, a tool security testers use to inspect how a web application behaves. Point your browser at Burp and log in again. In Burp you can read the same request. You can see the path, the headers, even the password field. You can change a value and send it on.</p>
+<p>That should feel wrong.</p>
+<p>If HTTPS encrypts the information, how can Burp read it? Does Burp know the website&#39;s secret key? Does it somehow break HTTPS?</p>
+<p>Neither explanation is correct.</p>
+<p>The interesting part is not a magical decryptor. It is what happens <em>between</em> your browser and the website. Let&#39;s follow one request and see what Burp actually does.</p>
 <p>A useful picture is a locked box.</p>
 <p>You want to send a box of papers to a company. You lock it so a stranger on the road cannot read the papers. Now imagine you first hand the box to a trusted inspection desk. The desk can open <em>its</em> lock, look at the papers, then put them into a new locked box and send that box to the company.</p>
 <p>Burp is that desk. It does not steal the company&#39;s lock. It does not pick the original lock on a box that was meant to go straight to the company. Your browser locks the box for Burp. Burp opens that box, inspects the papers, then locks a new box for the website.</p>
