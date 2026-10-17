@@ -1,0 +1,20 @@
+# 0xAbhiram Blog
+
+> Product Security writing by Abhiram SS (0xAbhiram).
+
+Site: https://0xabhiram-blogs.vercel.app
+Author: Abhiram SS
+Handle: 0xAbhiram
+Role: Product Security Engineer
+
+## Pages
+
+- [Home](https://0xabhiram-blogs.vercel.app/): 0xAbhiram Blog index
+- [The HTTPS Illusion](https://0xabhiram-blogs.vercel.app/post-burp.html): How Burp Suite lets you inspect encrypted web traffic
+- [Tags](https://0xabhiram-blogs.vercel.app/tags.html)
+- [Contact](https://0xabhiram-blogs.vercel.app/contact.html)
+
+## Feeds
+
+- RSS: https://0xabhiram-blogs.vercel.app/rss.xml
+- Sitemap: https://0xabhiram-blogs.vercel.app/sitemap.xml

@@ -1,0 +1,4 @@
+Contact: mailto:abhiram6542@gmail.com
+Expires: 2027-10-16T18:00:00.000Z
+Preferred-Languages: en
+Canonical: https://0xabhiram-blogs.vercel.app/.well-known/security.txt

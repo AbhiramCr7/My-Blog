@@ -84,6 +84,8 @@ def abs_url(rel):
 def seo(title, desc, url, image, kind, jsonld):
     lines = [
         f'  <meta name="author" content="Abhiram SS (0xAbhiram)">',
+        '  <meta name="google-site-verification" content="googlee17ca708e0613f4d">',
+        '  <meta name="keywords" content="0xAbhiram, 0xabhiram blogs, 0xAbhiram Blog, Product Security, Burp Suite, HTTPS, TLS">',
         '  <meta name="robots" content="index, follow, max-image-preview:large">',
         '  <link rel="icon" href="favicon.svg" type="image/svg+xml">',
         f'  <meta property="og:site_name" content="{SITE_NAME}">',
@@ -281,7 +283,7 @@ home_desc = "0xAbhiram Blog - Product Security Engineer Abhiram SS. The HTTPS Il
 home_ld = {
     "@context": "https://schema.org",
     "@graph": [
-        {"@type": "WebSite", "name": SITE_NAME, "alternateName": ["0xAbhiram", "0xAbhiram Blogs"], "description": home_desc,
+        {"@type": "WebSite", "name": SITE_NAME, "alternateName": ["0xAbhiram", "0xAbhiram Blog", "0xAbhiram Blogs", "0xabhiram blogs"], "description": home_desc,
          **({"url": abs_url("")} if SITE_URL else {}), "author": AUTHOR},
         {**AUTHOR, "jobTitle": "Product Security Engineer", "knowsAbout": ["Product Security", "Burp Suite", "HTTPS", "Red Teaming", "VAPT", "Penetration Testing"]},
         {"@type": "Blog", "name": SITE_NAME, "author": AUTHOR,
@@ -443,7 +445,6 @@ contact_body = contact_body.replace('data-to="CONTACT_EMAIL"', f'data-to="{CONTA
 open("contact.html","w").write(page(f"Contact | {SITE_NAME}", "Get in touch with Abhiram SS (0xAbhiram), Product Security Engineer - research collaboration, responsible disclosure, or a question about a post.",
     "~/contact", "contact", contact_body, url="contact.html"))
 
-robots = "User-agent: *\nAllow: /\n"
 if SITE_URL:
     urls = [("", "1.0")] + [(p["page"], "0.8") for p in POSTS] + [("tags.html", "0.5"), ("contact.html", "0.4")]
     newest = POSTS[0]["date"]
@@ -451,8 +452,75 @@ if SITE_URL:
         f"  <url><loc>{abs_url(u)}</loc><lastmod>{next((p['date'] for p in POSTS if p['page'] == u), newest)}</lastmod><priority>{pr}</priority></url>"
         for u, pr in urls)
     open("sitemap.xml", "w").write(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{entries}\n</urlset>\n')
-    robots += f"\nSitemap: {abs_url('sitemap.xml')}\n"
-open("robots.txt", "w").write(robots)
+
+open("googlee17ca708e0613f4d.html", "w").write("google-site-verification: googlee17ca708e0613f4d.html\n")
+
+robots_txt = """User-agent: *
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Anthropic-AI
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: {sitemap}
+""".format(sitemap=abs_url("sitemap.xml") if SITE_URL else "/sitemap.xml")
+open("robots.txt", "w").write(robots_txt)
+
+llms = f"""# {SITE_NAME}
+
+> Product Security writing by Abhiram SS (0xAbhiram).
+
+Site: {SITE_URL or "/"}
+Author: Abhiram SS
+Handle: 0xAbhiram
+Role: Product Security Engineer
+
+## Pages
+
+- [Home]({abs_url("") if SITE_URL else "/"}): 0xAbhiram Blog index
+- [The HTTPS Illusion]({abs_url("post-burp.html") if SITE_URL else "/post-burp.html"}): How Burp Suite lets you inspect encrypted web traffic
+- [Tags]({abs_url("tags.html") if SITE_URL else "/tags.html"})
+- [Contact]({abs_url("contact.html") if SITE_URL else "/contact.html"})
+
+## Feeds
+
+- RSS: {abs_url("rss.xml") if SITE_URL else "/rss.xml"}
+- Sitemap: {abs_url("sitemap.xml") if SITE_URL else "/sitemap.xml"}
+"""
+open("llms.txt", "w").write(llms)
+
+well = os.path.join(OUT, ".well-known")
+os.makedirs(well, exist_ok=True)
+security_txt = f"""Contact: mailto:{CONTACT_EMAIL}
+Expires: 2027-10-16T18:00:00.000Z
+Preferred-Languages: en
+Canonical: {abs_url(".well-known/security.txt") if SITE_URL else "/.well-known/security.txt"}
+"""
+open(os.path.join(well, "security.txt"), "w").write(security_txt)
+open("security.txt", "w").write(security_txt)
 
 rss_items = "\n".join(
     f"""  <item>
